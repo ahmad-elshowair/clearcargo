@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const Logo = () => {
 	return (
-		<div className="flex flex-col leading-none items-start">
+		<div className="flex lg:flex-col leading-none lg:items-start items-center">
 			<Image
 				src={
 					"https://mcqcttzcvnupvxeptsyf.supabase.co/storage/v1/object/public/ClreaCargo/images/ClearCargo-logo.png"
@@ -13,8 +13,8 @@ export const Logo = () => {
 				alt="ClearCargo Logo"
 				className="w-[120px] h-[80px]"
 			/>
-			<h1 className={`text-[40px] font-bold text-neutral-900 -mt-2`}>
-				<Link href="/">
+			<h1 className={`text-[40px] font-bold text-neutral-900`}>
+				<Link href="/" className="hidden lg:inline-block">
 					<span className="text-[#07BE52]">Clear</span>Cargo
 				</Link>
 			</h1>

@@ -39,7 +39,7 @@ const AuthLinks = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 					<Link
 						href={"/register"}
 						className={clsx(
-							"flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-semibold lg:flex-none md:justify-start md:p-2 md:px-3 shadow hover:bg-green-500 text-[#2A3940] bg-emerald-100 hover:text-green-50 duration-200 ease-in-out",
+							"flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-semibold lg:flex-none lg:justify-start md:p-2 md:px-3 shadow hover:bg-green-500 text-[#2A3940] bg-emerald-100 hover:text-green-50  duration-200 ease-in-out",
 							{
 								"bg-green-500 text-orange-50": pathname === "/register",
 							},
