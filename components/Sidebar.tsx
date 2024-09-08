@@ -1,4 +1,6 @@
 import { Logo } from "@/components/Logo";
+import NavLinks from "@/components/NavLinks";
+import AuthLinks from "./AuthLinks";
 
 const Sidebar = async () => {
 	return (
@@ -9,9 +11,9 @@ const Sidebar = async () => {
 						<Logo />
 					</section>
 					<section className="flex grow flex-row justify-between space-x-2 lg:flex-col lg:space-x-0 lg:space-y-2">
-						{/* <NavLinks /> */}
+						<NavLinks type="admin" />
 						<div className="hidden h-auto w-full grow rounded-md bg-green-100 md:block shadow" />
-						{/* <AuthLinks /> */}
+						<AuthLinks isLoggedIn={false} />
 					</section>
 				</aside>
 			</section>
