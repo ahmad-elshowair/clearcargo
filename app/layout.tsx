@@ -1,4 +1,3 @@
-import Sidebar from "@/components/Sidebar";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -28,10 +27,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				<main className="flex flex-col lg:flex-row md:overflow-hidden">
-					<Sidebar />
-					<section className="flex-grow md:overflow-y-auto">{children}</section>
-				</main>
+				<main className="flex-grow md:overflow-y-auto">{children}</main>
 			</body>
 		</html>
 	);
