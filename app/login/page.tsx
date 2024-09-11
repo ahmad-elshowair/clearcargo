@@ -24,7 +24,7 @@ const LoginPage = () => {
 							Cargo
 						</h1>
 					</section>
-					<section className="flex flex-col bg-green-500 h-full w-2/5 px-8 py-20 rounded-xl">
+					<section className="flex flex-col bg-green-500 h-full w-2/5 px-8 py-20 rounded-xl justify-center">
 						<h2 className="text-center text-slate-800 text-3xl font-bold mb-10">
 							Welcome Back
 						</h2>
