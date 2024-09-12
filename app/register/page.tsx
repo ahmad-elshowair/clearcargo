@@ -1,3 +1,4 @@
+import { register } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +15,7 @@ const RegisterPage = () => {
 						<h2 className="text-center text-slate-800 text-3xl font-bold mb-10">
 							Welcome to ClearCargo
 						</h2>
-						<form action="">
+						<form>
 							<section className="flex flex-col justify-center">
 								<div className="flex flex-col md:flex-row mb-10 gap-8">
 									<div className="grid items-center gap-1.5 w-full">
@@ -164,7 +165,9 @@ const RegisterPage = () => {
 								</div>
 							</section>
 							<section className="flex flex-col gap-12 items-center">
-								<Button className="bg-slate-800 text-white text-lg font-bold hover:bg-slate-900 max-w-40 w-full">
+								<Button
+									className="bg-slate-800 text-white text-lg font-bold hover:bg-slate-900 max-w-40 w-full"
+									formAction={register}>
 									Register
 								</Button>
 								<Link

@@ -1,3 +1,4 @@
+import { login } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,7 +29,7 @@ const LoginPage = () => {
 						<h2 className="text-center text-slate-800 text-3xl font-bold mb-10">
 							Welcome Back
 						</h2>
-						<form action="">
+						<form>
 							<section className="flex flex-col justify-center">
 								<div className="grid w-full items-center gap-1.5 mb-10">
 									<Label
@@ -78,7 +79,9 @@ const LoginPage = () => {
 								)}
 							</section>
 							<section className="flex flex-col gap-12 items-center">
-								<Button className="bg-slate-800 text-white text-lg font-bold hover:bg-slate-900 max-w-40 w-full">
+								<Button
+									className="bg-slate-800 text-white text-lg font-bold hover:bg-slate-900 max-w-40 w-full"
+									formAction={login}>
 									login
 								</Button>
 								<div className="flex flex-col md:flex-row items-center w-full justify-center gap-28">
