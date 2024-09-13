@@ -1,10 +1,9 @@
-import { hashPassword } from "@/lib/utils";
-import { createClient } from "@/utils/supabase/server";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+"use server";
+
+import { createSupabaseServerClient } from "@/utils/supabase/server";
 
 export const login = async (formDate: FormData) => {
-	const supabase = createClient();
+	const supabase = createSupabaseServerClient();
 
 	const data = {
 		email: formDate.get("email") as string,
@@ -13,15 +12,14 @@ export const login = async (formDate: FormData) => {
 
 	const { error } = await supabase.auth.signInWithPassword(data);
 	if (error) {
-		redirect("/error");
+		return { status: error, message: error.message };
 	}
 
-	revalidatePath("/", "layout");
-	redirect("/");
+	return { status: "success", message: "Logged in successfully" };
 };
 
 export const register = async (formDate: FormData) => {
-	const supabase = createClient();
+	const supabase = createSupabaseServerClient();
 
 	const data = {
 		email: formDate.get("email") as string,
@@ -32,21 +30,20 @@ export const register = async (formDate: FormData) => {
 		surname: formDate.get("surname"),
 	};
 
-	const hashedPassword = hashPassword(data.password);
-
 	const { error } = await supabase.auth.signUp({
 		email: data.email,
-		password: hashedPassword,
+		password: data.password,
 	});
 
 	if (error) {
-		redirect("/error");
+		return { status: "error", message: error.message };
 	}
 
-	const { error: insertError } = await supabase.from("users").insert([
+	const { error: insertError } = await supabase.from("customers").insert([
 		{
+			id: (await supabase.auth.getUser()).data.user?.id,
 			email: data.email,
-			password: hashedPassword,
+			password: data.password,
 			first_name: data.first_name,
 			surname: data.surname,
 			date_of_birth: data.date_of_birth,
@@ -55,9 +52,8 @@ export const register = async (formDate: FormData) => {
 	]);
 
 	if (insertError) {
-		redirect("/error");
+		return { status: "error", message: insertError.message };
 	}
 
-	revalidatePath("/", "layout");
-	redirect("/");
+	return { status: "success", message: "Registered successfully" };
 };

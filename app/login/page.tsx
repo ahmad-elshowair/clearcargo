@@ -40,7 +40,8 @@ const LoginPage = () => {
 									<Input
 										type="email"
 										id="email"
-										placeholder="example"
+										name="email"
+										placeholder="example@email.com"
 										aria-describedby="email-error"
 										className="bg-green-200 border-0 text-slate-800 h-12"
 									/>
