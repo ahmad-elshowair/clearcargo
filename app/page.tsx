@@ -1,10 +1,16 @@
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { BsArrowRight } from "react-icons/bs";
 
-export default function Home() {
-	const session = { isLoggedIn: false, name: "Jihad" };
+export default async function Home() {
+	const supabase = createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	const session = { isLoggedIn: user ? true : false, name: user?.email };
 	return (
 		<section className="lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full">
 			<div className="grid gap-6 rounded-lg bg-gray-300/35 shadow h-full justify-items-stretch p-5 border border-green-400/50">

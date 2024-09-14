@@ -1,10 +1,10 @@
 import configs from "@/configs/config";
 import { createServerClient } from "@supabase/ssr";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
 	let supabaseResponse = NextResponse.next({
-		request: { headers: request.headers },
+		request,
 	});
 
 	const supabase = createServerClient(
@@ -30,30 +30,21 @@ export async function updateSession(request: NextRequest) {
 		},
 	);
 
-	const publicRoutes = [
-		"/login",
-		"/register",
-		"/forgot-password",
-		"/reset-password",
-		"/auth",
-	];
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
 
-	try {
-		const {
-			data: { user },
-			error,
-		} = await supabase.auth.getUser();
-		if (error) throw new Error(error.message);
+	const publicRoutes = ["/", "/login", "/register", "/auth/confirm"];
 
-		if (
-			!user &&
-			!publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
-		) {
-			return NextResponse.redirect(new URL("/login", request.url));
-		}
-	} catch (err) {
-		console.error("Error fetching user: ", err);
-		return NextResponse.error();
+	if (
+		!user &&
+		!publicRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
+	) {
+		// no user, potentially respond by redirecting the user to the login page
+		const url = request.nextUrl.clone();
+		url.pathname = "/login";
+		return NextResponse.redirect(url);
 	}
+
 	return supabaseResponse;
 }

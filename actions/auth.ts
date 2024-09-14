@@ -1,9 +1,9 @@
 "use server";
 
-import { createSupabaseServerClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 export const login = async (formDate: FormData) => {
-	const supabase = createSupabaseServerClient();
+	const supabase = createClient();
 
 	const data = {
 		email: formDate.get("email") as string,
@@ -19,15 +19,15 @@ export const login = async (formDate: FormData) => {
 };
 
 export const register = async (formDate: FormData) => {
-	const supabase = createSupabaseServerClient();
+	const supabase = createClient();
 
 	const data = {
 		email: formDate.get("email") as string,
 		password: formDate.get("password") as string,
-		date_of_birth: formDate.get("date_of_birth"),
-		mobile_number: formDate.get("mobile_number"),
-		first_name: formDate.get("first_name"),
-		surname: formDate.get("surname"),
+		date_of_birth: formDate.get("date_of_birth") as string,
+		mobile_number: formDate.get("mobile_number") as string,
+		first_name: formDate.get("first_name") as string,
+		surname: formDate.get("surname") as string,
 	};
 
 	const { error } = await supabase.auth.signUp({
@@ -36,6 +36,7 @@ export const register = async (formDate: FormData) => {
 	});
 
 	if (error) {
+		console.error(error.message);
 		return { status: "error", message: error.message };
 	}
 
@@ -52,6 +53,7 @@ export const register = async (formDate: FormData) => {
 	]);
 
 	if (insertError) {
+		console.error(insertError.message);
 		return { status: "error", message: insertError.message };
 	}
 
