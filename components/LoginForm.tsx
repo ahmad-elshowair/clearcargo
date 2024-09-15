@@ -99,11 +99,13 @@ export const LoginForm = () => {
 						/>
 					</div>
 				</section>
-				<section className="flex flex-col gap-6 items-center justify-between">
-					<Button type="submit" className="font-bold w-4/12">
+				<section className="flex flex-col gap-10 items-center justify-between">
+					<Button
+						type="submit"
+						className="font-bold w-4/12 text-white bg-gray-500 hover:bg-gray-700">
 						Login
 					</Button>
-					<div className="flex justify-center gap-20">
+					<div className="flex justify-center gap-20 text-sm">
 						<Link
 							href={"/forgot-password"}
 							className="text-slate-500 hover:text-slate-600 hover:underline">

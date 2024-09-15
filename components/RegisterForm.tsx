@@ -192,13 +192,15 @@ export default function RegisterForm() {
 					</div>
 				</section>
 
-				<section className="flex items-center md:flex-row flex-col md:justify-between">
-					<Button type="submit" className="font-bold w-4/12">
+				<section className="flex items-center gap-10 flex-col md:justify-between">
+					<Button
+						type="submit"
+						className="font-bold w-5/12 text-white bg-gray-500 hover:bg-gray-700">
 						Register
 					</Button>
 					<Link
 						href={"/login"}
-						className="text-slate-500 hover:text-slate-600 hover:underline">
+						className="text-sm text-slate-500 hover:text-slate-600 hover:underline">
 						Already have an account
 					</Link>
 				</section>
