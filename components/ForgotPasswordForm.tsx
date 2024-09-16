@@ -41,16 +41,17 @@ const ForgotPasswordForm = () => {
 					description: result.message,
 					variant: "destructive",
 				});
+			} else {
+				toast({
+					title: "Forgot Password",
+					description: result.message,
+				});
 			}
-
-			toast({
-				title: "Forgot Password",
-				description: result.message,
-			});
 		} catch (error) {
 			toast({
 				title: "Error",
 				description: (error as Error).message,
+				variant: "destructive",
 			});
 		}
 	};

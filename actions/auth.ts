@@ -102,6 +102,17 @@ export const forgotPassword = async (
 
 	const email = formDate.get("email") as string;
 
+	const user = await getUserByEmail(email);
+
+	// Handle user not found
+	if (user.status === "error" && user.message === "User not found") {
+		return { status: "error", message: user.message };
+	} else if (user.status === "error") {
+		// Handle unexpected errors from getUserByEmail
+		console.error("Error fetching user:", user.message);
+		return { status: "error", message: user.message };
+	}
+
 	const { error } = await supabase.auth.resetPasswordForEmail(email);
 	if (error) {
 		return { status: "error", message: error.message };
