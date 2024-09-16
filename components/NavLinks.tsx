@@ -11,18 +11,31 @@ const NavLinks = ({ type }: { type: "customer" | "admin" }) => {
 	const links = [
 		{ href: "/", label: "Home", icon: GiHomeGarage },
 		{ href: "/dashboard", label: "Dashboard", icon: RiDashboardHorizontalFill },
-		{ href: "/dashboard/page-1", label: "Page-1", icon: SiPagespeedinsights },
-		{ href: "/dashboard/page-2", label: "Page-2", icon: SiPagespeedinsights },
+		{
+			href: "/dashboard/shipments",
+			label: "Shipments",
+			icon: SiPagespeedinsights,
+		},
+		{
+			href: "/dashboard/all-shipments",
+			label: "All Shipments",
+			icon: SiPagespeedinsights,
+		},
+		{
+			href: "/dashboard/customer",
+			label: "Customers",
+			icon: SiPagespeedinsights,
+		},
 	];
 
 	const filteredLinks = links.filter((link) => {
 		if (!type) {
 			return link.href !== "/";
 		}
-		if (type !== "admin" && link.href === "/dashboard/page-2") {
+		if (type !== "admin" && link.href === "/dashboard/customers") {
 			return false;
 		}
-		if (type !== "admin" && link.href === "/dashboard") {
+		if (type !== "admin" && link.href === "/dashboard/all-shipments") {
 			return false;
 		}
 		return true;
