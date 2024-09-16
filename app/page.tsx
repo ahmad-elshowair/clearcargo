@@ -11,7 +11,10 @@ export default async function Home() {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	const session = { isLoggedIn: !!user, name: user?.email };
+	const session = {
+		isLoggedIn: !!user,
+		name: `${user?.user_metadata.first_name} ${user?.user_metadata.surname}`,
+	};
 	return (
 		<section className="lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full">
 			<div className="grid gap-6 rounded-lg bg-gray-300/35 shadow h-full justify-items-stretch p-5 border border-green-400/50">
@@ -26,7 +29,7 @@ export default async function Home() {
 								<span className="text-green-400 ml-1">{session?.name}</span>
 							</h1>
 							<Link
-								href="/dashboard/page-1"
+								href="/dashboard"
 								className="flex justify-center text-lg font-bold items-center gap-2 hover:text-green-500 group duration-500 ease-in-out">
 								<span className="group-hover:mr-4">Check Your Shipments</span>
 								<i className="text-2xl">

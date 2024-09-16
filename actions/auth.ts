@@ -13,12 +13,21 @@ export const login = async (formDate: FormData): Promise<AuthResult> => {
 	};
 
 	const user = await getUserByEmail(data.email);
+
+	// Handle user not found
 	if (user.status === "error" && user.message === "User not found") {
 		return { status: "error", message: "User not found" };
+	} else if (user.status === "error") {
+		// Handle unexpected errors from getUserByEmail
+		console.error("Error fetching user:", user.message);
+		return { status: "error", message: user.message };
 	}
 
 	const { error: errorLogin } = await supabase.auth.signInWithPassword(data);
 	if (errorLogin) {
+		if (errorLogin.status === 400) {
+			return { status: "error", message: "Incorrect password" };
+		}
 		console.error("Login error:", errorLogin.message);
 		return { status: "error", message: errorLogin.message };
 	}
@@ -40,8 +49,13 @@ export const register = async (formDate: FormData): Promise<AuthResult> => {
 
 	const user = await getUserByEmail(data.email);
 
-	if (user.data) {
-		return { status: "error", message: "Email already exist!" };
+	// Handle existing user
+	if (user.status === "success") {
+		return { status: "error", message: "Email already exists!" };
+	} else if (user.status === "error" && user.message !== "User not found") {
+		// Handle unexpected errors
+		console.error("Error checking existing user:", user.message);
+		return { status: "error", message: "Error checking existing user" };
 	}
 
 	const { data: signUpData, error: signUpError } = await supabase.auth.signUp({

@@ -1,8 +1,15 @@
 import { Logo } from "@/components/Logo";
 import NavLinks from "@/components/NavLinks";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import AuthLinks from "./AuthLinks";
 
 const Sidebar = async () => {
+	const supabase = await createSupabaseServerClient();
+
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
 	return (
 		<>
 			<section className="w-full h-fit lg:h-screen lg:w-64 sticky top-0">
@@ -13,7 +20,7 @@ const Sidebar = async () => {
 					<section className="flex grow flex-row justify-between space-x-2 lg:flex-col lg:space-x-0 lg:space-y-2">
 						<NavLinks type="admin" />
 						<div className="hidden h-auto w-full grow rounded-md bg-green-100 md:block shadow" />
-						<AuthLinks isLoggedIn={false} />
+						<AuthLinks isLoggedIn={!!user} />
 					</section>
 				</aside>
 			</section>

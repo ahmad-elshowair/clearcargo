@@ -72,7 +72,7 @@ export async function updateSession(request: NextRequest) {
 		return redirect("/login");
 	}
 	// IF THE ROUTE IS ADMIN ROUTE, THEN REDIRECT TO NOT AUTHORIZED PAGE
-	if (ROUTES_CONFIG.ADMIN.has(path) && user.app_metadata.type !== "admin") {
+	if (ROUTES_CONFIG.ADMIN.has(path) && user.user_metadata.type !== "admin") {
 		return redirect("/not-authorized");
 	}
 

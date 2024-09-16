@@ -11,27 +11,32 @@ export async function GET(request: NextRequest) {
 
 	const next = searchParams.get("next") ?? "/";
 
+	// If token_hash or type is missing, redirect to error page with absolute URL
+
 	if (!token_hash || !type) {
-		return NextResponse.redirect(
-			"/error?message=Invalid%20or%20missing%20parameters",
-		);
+		const errorUrl = new URL("/error", request.url);
+		errorUrl.searchParams.set("message", "Invalid or missing parameters");
+		return NextResponse.redirect(errorUrl.toString());
 	}
-	const supabase = createSupabaseServerClient();
+	const supabase = await createSupabaseServerClient();
 
 	try {
 		const { error } = await supabase.auth.verifyOtp({ type, token_hash });
 
 		if (error) {
 			console.error("Error verifying OTP:", error);
-			return NextResponse.redirect(
-				`/error?message=${encodeURIComponent(error.message)}`,
-			);
+			const errorUrl = new URL("/error", request.url);
+			errorUrl.searchParams.set("message", error.message);
+			return NextResponse.redirect(errorUrl.toString());
 		}
-		return NextResponse.redirect(next);
+		// Redirect to the next page after successful verification
+		const nextUrl = new URL(next, request.url);
+		return NextResponse.redirect(nextUrl.toString());
 	} catch (error) {
 		console.error("Unexpected error:", error);
-		return NextResponse.redirect(
-			"/error?message=An%20unexpected%20error%20occurred",
-		);
+		console.error("Unexpected error:", error);
+		const errorUrl = new URL("/error", request.url);
+		errorUrl.searchParams.set("message", "An unexpected error occurred");
+		return NextResponse.redirect(errorUrl.toString());
 	}
 }
