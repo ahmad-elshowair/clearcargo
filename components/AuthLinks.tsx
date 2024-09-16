@@ -1,4 +1,5 @@
 "use client";
+import { logout } from "@/actions/auth";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -7,12 +8,31 @@ import {
 	FaArrowRightToBracket,
 	FaUserPlus,
 } from "react-icons/fa6";
+import { useToast } from "./hooks/use-toast";
 
 const AuthLinks = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 	const router = useRouter();
 	const pathname = usePathname();
+	const { toast } = useToast();
 	const handleLogout = async () => {
-		router.push("/login");
+		try {
+			const result = await logout();
+			if (result.status === "success") {
+				toast({
+					title: "Logout",
+					description: result.message,
+				});
+				router.push("/login");
+			} else {
+				toast({
+					title: "Logout",
+					description: result.message,
+					variant: "destructive",
+				});
+			}
+		} catch (error) {
+			console.error(error);
+		}
 	};
 	return (
 		<>
@@ -21,7 +41,7 @@ const AuthLinks = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 					onClick={handleLogout}
 					className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-semibold lg:flex-none md:justify-start md:p-2 md:px-3 shadow hover:bg-green-500 text-[#2A3940] bg-emerald-100 hover:text-green-50 duration-200 ease-in-out">
 					<FaArrowRightFromBracket className="w-6" />
-					<span className="sm:hidden lg:block">Sign out</span>
+					<span className="sm:hidden lg:block">logout</span>
 				</button>
 			) : (
 				<>
