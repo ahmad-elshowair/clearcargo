@@ -1,8 +1,23 @@
 "use server";
 import { LoginForm } from "@/components/LoginForm";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
-const LoginPage = () => {
+const LoginPage = async () => {
+	const supabase = await createSupabaseServerClient();
+
+	const {
+		data: { user },
+		error,
+	} = await supabase.auth.getUser();
+	if (error) {
+		console.error("Error fetching user login: ", error);
+	}
+
+	if (user) {
+		redirect("/");
+	}
 	return (
 		<section className="lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full">
 			<section className="rounded-lg bg-gray-300/35 shadow h-full p-20 border border-green-400/50">

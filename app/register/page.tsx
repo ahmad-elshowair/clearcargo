@@ -1,7 +1,22 @@
 import RegisterForm from "@/components/RegisterForm";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
-const RegisterPage = () => {
+const RegisterPage = async () => {
+	const supabase = await createSupabaseServerClient();
+
+	const {
+		data: { user },
+		error,
+	} = await supabase.auth.getUser();
+	if (error) {
+		console.error("Error fetching user login: ", error);
+	}
+
+	if (user) {
+		redirect("/");
+	}
 	return (
 		<section className="lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full">
 			<section className="rounded-lg bg-gray-300/35 shadow h-full p-10 md:p-20 border border-green-400/50">

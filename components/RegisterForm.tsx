@@ -53,10 +53,10 @@ export default function RegisterForm() {
 			});
 		} else {
 			toast({
-				title: "Login",
+				title: "Registration",
 				description: result.message,
 			});
-			router.push("/");
+			router.push("/login");
 		}
 	};
 

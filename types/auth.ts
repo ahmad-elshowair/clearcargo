@@ -6,3 +6,8 @@ export type TRegisterCredentials = {
 	date_of_birth: string;
 	mobile_number: string;
 };
+
+export type AuthResult = {
+	status: "error" | "success";
+	message: string;
+};

@@ -1,16 +1,17 @@
 import { Logo } from "@/components/Logo";
+import LogoutButton from "@/components/LogoutButton";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { BsArrowRight } from "react-icons/bs";
 
 export default async function Home() {
-	const supabase = createClient();
+	const supabase = await createSupabaseServerClient();
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	const session = { isLoggedIn: user ? true : false, name: user?.email };
+	const session = { isLoggedIn: !!user, name: user?.email };
 	return (
 		<section className="lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full">
 			<div className="grid gap-6 rounded-lg bg-gray-300/35 shadow h-full justify-items-stretch p-5 border border-green-400/50">
@@ -50,7 +51,7 @@ export default async function Home() {
 				</section>
 				<section className="justify-self-end flex gap-4 items-end">
 					{session.isLoggedIn ? (
-						<Button className="text-white bg-green-500">Logout</Button>
+						<LogoutButton />
 					) : (
 						<>
 							<Link href="/register">
