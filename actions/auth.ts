@@ -2,6 +2,7 @@
 
 import configs from "@/configs/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isOver18 } from "@/lib/utils";
 import { AuthResult } from "@/types/auth";
 import { getUserByEmail } from "./user";
 
@@ -47,6 +48,14 @@ export const register = async (formDate: FormData): Promise<AuthResult> => {
 		first_name: formDate.get("first_name") as string,
 		surname: formDate.get("surname") as string,
 	};
+
+	// CHECK IF THE USER IS NOT OVER 18 YEARS.
+	if (!isOver18(data.date_of_birth)) {
+		return {
+			status: "error",
+			message: "You must be over 18 years old to register",
+		};
+	}
 
 	const user = await getUserByEmail(data.email);
 
