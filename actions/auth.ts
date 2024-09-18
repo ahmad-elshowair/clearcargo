@@ -89,7 +89,11 @@ export const register = async (formDate: FormData): Promise<AuthResult> => {
 		return { status: "error", message: signUpError.message };
 	}
 
-	return { status: "success", message: "Registered successfully" };
+	return {
+		status: "success",
+		message:
+			"Registered successfully, PLEASE CONFIRM YOUR EMAIL TO COMPLETE REGISTRATION",
+	};
 };
 
 export const logout = async (): Promise<AuthResult> => {
