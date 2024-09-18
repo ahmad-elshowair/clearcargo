@@ -3,12 +3,12 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
-	// Initialize response
+	// INITIALIZE RESPONSE
 	const supabaseResponse = NextResponse.next({
 		request,
 	});
 
-	// Initialize Supabase client
+	// INITIALIZE SUPABASE CLIENT
 	const supabase = createServerClient(
 		configs.supabaseUrl,
 		configs.supabaseAnonKey,
@@ -32,7 +32,7 @@ export async function updateSession(request: NextRequest) {
 		},
 	);
 
-	// Retrieve user from Supabase session
+	// RETRIEVE USER FROM SUPABASE SESSION
 	const {
 		data: { user },
 		error,
@@ -52,6 +52,7 @@ export async function updateSession(request: NextRequest) {
 			"/register",
 			"/auth/confirm",
 			"/forgot-password",
+			"/reset-password",
 		]),
 		PROTECTED: new Set(["/dashboard", "/shipments"]),
 		ADMIN: new Set(["/customers", "/all-shipments"]),
@@ -81,6 +82,6 @@ export async function updateSession(request: NextRequest) {
 		return NextResponse.next();
 	}
 
-	// Return the modified response
+	// RETURN THE MODIFIED RESPONSE
 	return supabaseResponse;
 }

@@ -22,7 +22,7 @@ const NavLinks = ({ type }: { type: "customer" | "admin" }) => {
 			icon: SiPagespeedinsights,
 		},
 		{
-			href: "/dashboard/customer",
+			href: "/dashboard/customers",
 			label: "Customers",
 			icon: SiPagespeedinsights,
 		},

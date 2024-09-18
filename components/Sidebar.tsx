@@ -18,7 +18,7 @@ const Sidebar = async () => {
 						<Logo fontSize="text-[35px]" />
 					</section>
 					<section className="flex grow flex-row justify-between space-x-2 lg:flex-col lg:space-x-0 lg:space-y-2">
-						<NavLinks type="admin" />
+						<NavLinks type={user?.user_metadata.type} />
 						<div className="hidden h-auto w-full grow rounded-md bg-green-100 md:block shadow" />
 						<AuthLinks isLoggedIn={!!user} />
 					</section>

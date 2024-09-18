@@ -1,5 +1,6 @@
 "use server";
 
+import configs from "@/configs/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { AuthResult } from "@/types/auth";
 import { getUserByEmail } from "./user";
@@ -14,11 +15,11 @@ export const login = async (formDate: FormData): Promise<AuthResult> => {
 
 	const user = await getUserByEmail(data.email);
 
-	// Handle user not found
+	// HANDLE USER NOT FOUND
 	if (user.status === "error" && user.message === "User not found") {
 		return { status: "error", message: "User not found" };
 	} else if (user.status === "error") {
-		// Handle unexpected errors from getUserByEmail
+		// HANDLE UNEXPECTED ERRORS FROM getUserByEmail
 		console.error("Error fetching user:", user.message);
 		return { status: "error", message: user.message };
 	}
@@ -49,11 +50,11 @@ export const register = async (formDate: FormData): Promise<AuthResult> => {
 
 	const user = await getUserByEmail(data.email);
 
-	// Handle existing user
+	// HANDLE EXISTING USER
 	if (user.status === "success") {
 		return { status: "error", message: "Email already exists!" };
 	} else if (user.status === "error" && user.message !== "User not found") {
-		// Handle unexpected errors
+		// HANDLE UNEXPECTED ERRORS
 		console.error("Error checking existing user:", user.message);
 		return { status: "error", message: "Error checking existing user" };
 	}
@@ -104,22 +105,60 @@ export const forgotPassword = async (
 
 	const user = await getUserByEmail(email);
 
-	// Handle user not found
+	// HANDLE USER NOT FOUND
 	if (user.status === "error" && user.message === "User not found") {
 		return { status: "error", message: user.message };
 	} else if (user.status === "error") {
-		// Handle unexpected errors from getUserByEmail
-		console.error("Error fetching user:", user.message);
+		//HANDLE UNEXPECTED ERRORS FROM getUserByEmail
+		console.error("ERROR FETCHING USER: ", user.message);
 		return { status: "error", message: user.message };
 	}
 
-	const { error } = await supabase.auth.resetPasswordForEmail(email);
+	const { error } = await supabase.auth.resetPasswordForEmail(email, {
+		redirectTo: `${configs.frontendUrl}reset-password`,
+	});
+
 	if (error) {
 		return { status: "error", message: error.message };
 	}
-
 	return {
 		status: "success",
-		message: "Password reset email sent successfully",
+		message: "PASSWORD RESET EMAIL SENT SUCCESSFULLY",
 	};
+};
+
+export const resetPassword = async (formData: FormData) => {
+	const supabase = await createSupabaseServerClient();
+
+	const new_password = formData.get("new_password") as string;
+	const code = formData.get("code") as string;
+
+	if (!code) {
+		return { status: "error", message: "MISSING CODE!" };
+	}
+
+	try {
+		const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(
+			code,
+		);
+
+		if (exchangeError) {
+			console.error("Error verifying recovery code:", exchangeError.message);
+			return { status: "error", message: exchangeError.message };
+		}
+
+		const { error: updateError } = await supabase.auth.updateUser({
+			password: new_password,
+		});
+
+		if (updateError) {
+			console.error("Error updating password:", updateError.message);
+			return { status: "error", message: updateError.message };
+		}
+
+		return { status: "success", message: "PASSWORD UPDATED SUCCESSFULLY" };
+	} catch (error) {
+		console.error("ERROR RESETTING PASSWORD:", error);
+		return { status: "error", message: (error as Error).message };
+	}
 };

@@ -1,5 +1,6 @@
 "use client";
 import { forgotPassword } from "@/actions/auth";
+import { ForgotPasswordSchema } from "@/lib/schemas/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,21 +16,18 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 
-const EmailSchema = z.object({
-	email: z.string().email({ message: "Invalid Email" }),
-});
-type EmailFormData = z.infer<typeof EmailSchema>;
+type ForgotPasswordFormData = z.infer<typeof ForgotPasswordSchema>;
 
 const ForgotPasswordForm = () => {
 	const { toast } = useToast();
-	const form = useForm<EmailFormData>({
-		resolver: zodResolver(EmailSchema),
+	const form = useForm<ForgotPasswordFormData>({
+		resolver: zodResolver(ForgotPasswordSchema),
 		defaultValues: {
 			email: "",
 		},
 	});
 
-	const onSubmit = async (data: EmailFormData) => {
+	const onSubmit = async (data: ForgotPasswordFormData) => {
 		try {
 			const formData = new FormData();
 			formData.append("email", data.email);
