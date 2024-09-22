@@ -2,9 +2,10 @@
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FaShippingFast } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa6";
 import { GiHomeGarage } from "react-icons/gi";
 import { RiDashboardHorizontalFill } from "react-icons/ri";
-import { SiPagespeedinsights } from "react-icons/si";
 
 const NavLinks = ({ type }: { type: "customer" | "admin" }) => {
 	const pathname = usePathname();
@@ -14,17 +15,17 @@ const NavLinks = ({ type }: { type: "customer" | "admin" }) => {
 		{
 			href: "/dashboard/shipments",
 			label: "Shipments",
-			icon: SiPagespeedinsights,
+			icon: FaShippingFast,
 		},
 		{
 			href: "/dashboard/all-shipments",
 			label: "All Shipments",
-			icon: SiPagespeedinsights,
+			icon: FaShippingFast,
 		},
 		{
 			href: "/dashboard/customers",
 			label: "Customers",
-			icon: SiPagespeedinsights,
+			icon: FaUsers,
 		},
 	];
 
