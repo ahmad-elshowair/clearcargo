@@ -27,7 +27,7 @@ const CustomersPage = async () => {
 				<CustomersList users={data} />
 			</Suspense>
 			<section className="mt-5 flex w-full justify-center">
-				{/* <Pagination /> */}
+				{/* here goes the pagination  */}
 			</section>
 		</section>
 	);
