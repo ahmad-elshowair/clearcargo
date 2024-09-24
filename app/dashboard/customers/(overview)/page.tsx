@@ -1,5 +1,7 @@
 import { fetchFilteredUsers } from "@/actions/user";
+import CustomersLoading from "@/app/dashboard/customers/(overview)/loading";
 import CustomersList from "@/components/dashboard/customers/CustomersList";
+import { PaginationControls } from "@/components/Pagination";
 import Search from "@/components/Search";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -13,11 +15,11 @@ export const metadata: Metadata = {
 const CustomersPage = async ({
 	searchParams,
 }: {
-	searchParams: { query?: string; page?: number };
+	searchParams: { query?: string; page?: string };
 }) => {
 	const query = searchParams.query || "";
-	const page = Number(searchParams.page) || 1;
-	const { data } = await fetchFilteredUsers(query, page);
+	const currentPage = Number(searchParams.page) || 1;
+	const { data, totalPages = 1 } = await fetchFilteredUsers(query, currentPage);
 
 	return (
 		<section className="flex lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full flex-col gap-3">
@@ -30,11 +32,19 @@ const CustomersPage = async ({
 					Create
 				</Link>
 			</section>
-			<Suspense>
+			<Suspense fallback={<CustomersLoading />}>
 				<CustomersList users={data} />
 			</Suspense>
 			<section className="mt-5 flex w-full justify-center">
-				{/* here goes the pagination  */}
+				<PaginationControls
+					currentPage={currentPage}
+					totalPages={totalPages}
+					createPageURL={(pageNumber) => {
+						const params = new URLSearchParams(searchParams);
+						params.set("page", pageNumber.toString());
+						return `?${params.toString()}`;
+					}}
+				/>
 			</section>
 		</section>
 	);
