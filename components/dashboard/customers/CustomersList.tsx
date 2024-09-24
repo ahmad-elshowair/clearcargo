@@ -1,10 +1,10 @@
 import Customer from "@/components/dashboard/customers/Customer";
 import { Button } from "@/components/ui/button";
-import { User } from "@supabase/supabase-js";
+import { TUserTable } from "@/types/user";
 import Image from "next/image";
 import { FaPencil, FaTrashCan } from "react-icons/fa6";
 
-const CustomersList = ({ users }: { users: User[] | null }) => {
+const CustomersList = ({ users }: { users: TUserTable[] | null }) => {
 	return (
 		<section className="mt-6 flow-root">
 			<div className="inline-block min-w-full align-middle">
@@ -14,10 +14,11 @@ const CustomersList = ({ users }: { users: User[] | null }) => {
 							users.map((user) => (
 								<Customer
 									key={user.id}
-									type={user.user_metadata.type}
-									first_name={user.user_metadata.first_name}
-									surname={user.user_metadata.surname}
+									type={user.user_type}
+									first_name={user.first_name}
+									surname={user.surname}
 									created_at={user.created_at}
+									email={user.email}
 								/>
 							))
 						) : (
@@ -63,16 +64,16 @@ const CustomersList = ({ users }: { users: User[] | null }) => {
 												}
 												height={40}
 												width={40}
-												alt={`${user.user_metadata.first_name}'s profile avatar`}
+												alt={`${user.first_name}'s profile avatar`}
 												className="rounded-2xl"
 											/>
 										</td>
-										<td className="p-3 whitespace-nowrap text-sm">{`${user.user_metadata.first_name} ${user.user_metadata.surname}`}</td>
+										<td className="p-3 whitespace-nowrap text-sm">{`${user.first_name} ${user.surname}`}</td>
 										<td className="p-3 whitespace-nowrap text-sm">
 											{user.email}
 										</td>
 										<td className="p-3 whitespace-nowrap text-sm">
-											{user.user_metadata.type}
+											{user.user_type}
 										</td>
 										<td className="p-3 whitespace-nowrap text-sm">
 											{user.created_at.toString().slice(0, 10)}

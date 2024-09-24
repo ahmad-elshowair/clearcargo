@@ -6,14 +6,16 @@ const Customer = ({
 	surname,
 	created_at,
 	type,
+	email,
 }: {
 	first_name: string;
 	surname: string;
 	type: string;
 	created_at: string;
+	email: string;
 }) => {
 	return (
-		<section className="mb-2 w-full rounded-md bg-green-50 p-4">
+		<section className="mb-2 w-full rounded-md bg-white p-4">
 			<section className="flex items-center justify-between border-b pb-4">
 				<div>
 					<div className="mb-2 flex items-center">
@@ -28,8 +30,9 @@ const Customer = ({
 						/>
 						<h2 className="text-lg font-bold">{`${first_name} ${surname}`}</h2>
 					</div>
-					<span>{created_at.toString().slice(0, 10)}</span>
+					<span>{email}</span>
 				</div>
+				<span>{created_at.toString().slice(0, 10)}</span>
 			</section>
 			<section className="flex w-full items-center justify-between pt-4">
 				<div>

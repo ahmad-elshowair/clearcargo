@@ -1,4 +1,4 @@
-import { fetchAllUser } from "@/actions/user";
+import { fetchFilteredUsers } from "@/actions/user";
 import CustomersList from "@/components/dashboard/customers/CustomersList";
 import Search from "@/components/Search";
 import type { Metadata } from "next";
@@ -10,8 +10,15 @@ export const metadata: Metadata = {
 	description: "List of all customers",
 };
 
-const CustomersPage = async () => {
-	const { data } = await fetchAllUser();
+const CustomersPage = async ({
+	searchParams,
+}: {
+	searchParams: { query?: string; page?: number };
+}) => {
+	const query = searchParams.query || "";
+	const page = Number(searchParams.page) || 1;
+	const { data } = await fetchFilteredUsers(query, page);
+
 	return (
 		<section className="flex lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full flex-col gap-3">
 			<h1 className="md:mt-20 text-3xl font-bold mb-4 md:mb-8">Customers</h1>

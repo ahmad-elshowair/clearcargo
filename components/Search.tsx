@@ -26,9 +26,10 @@ const Search = ({ placeholder }: { placeholder: string }) => {
 				Search
 			</label>
 			<Input
+				className="peer block w-full rounded-md border border-green-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-green-500"
 				onChange={(e) => handleSearch(e.target.value)}
 				placeholder={placeholder}
-				className="peer block w-full rounded-md border border-green-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-green-500"
+				defaultValue={searchParams.get("query")?.toString()}
 			/>
 			<FaSearchengin className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-green-500 peer-focus:text-green-900" />
 		</section>

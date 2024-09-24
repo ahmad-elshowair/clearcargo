@@ -4,7 +4,7 @@ import configs from "@/configs/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isOver18 } from "@/lib/utils";
 import { AuthResult } from "@/types/auth";
-import { getUserByEmail } from "./user";
+import { fetchUserByEmail } from "./user";
 
 export const login = async (formDate: FormData): Promise<AuthResult> => {
 	const supabase = await createSupabaseServerClient();
@@ -14,7 +14,7 @@ export const login = async (formDate: FormData): Promise<AuthResult> => {
 		password: formDate.get("password") as string,
 	};
 
-	const user = await getUserByEmail(data.email);
+	const user = await fetchUserByEmail(data.email);
 
 	// HANDLE USER NOT FOUND
 	if (user.status === "error" && user.message === "User not found") {
@@ -57,7 +57,7 @@ export const register = async (formDate: FormData): Promise<AuthResult> => {
 		};
 	}
 
-	const user = await getUserByEmail(data.email);
+	const user = await fetchUserByEmail(data.email);
 
 	// HANDLE EXISTING USER
 	if (user.status === "success") {
@@ -116,13 +116,13 @@ export const forgotPassword = async (
 
 	const email = formDate.get("email") as string;
 
-	const user = await getUserByEmail(email);
+	const user = await fetchUserByEmail(email);
 
 	// HANDLE USER NOT FOUND
 	if (user.status === "error" && user.message === "User not found") {
 		return { status: "error", message: user.message };
 	} else if (user.status === "error") {
-		//HANDLE UNEXPECTED ERRORS FROM getUserByEmail
+		//HANDLE UNEXPECTED ERRORS FROM fetchUserByEmail
 		console.error("ERROR FETCHING USER: ", user.message);
 		return { status: "error", message: user.message };
 	}
