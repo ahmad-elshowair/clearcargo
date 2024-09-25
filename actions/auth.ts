@@ -37,7 +37,10 @@ export const login = async (formDate: FormData): Promise<AuthResult> => {
 	return { status: "success", message: "Logged in successfully" };
 };
 
-export const register = async (formDate: FormData): Promise<AuthResult> => {
+export const register = async (
+	formDate: FormData,
+	type?: string,
+): Promise<AuthResult> => {
 	const supabase = await createSupabaseServerClient();
 
 	const data = {
@@ -77,7 +80,7 @@ export const register = async (formDate: FormData): Promise<AuthResult> => {
 				surname: data.surname,
 				date_of_birth: data.date_of_birth,
 				mobile_number: data.mobile_number,
-				type: "customer",
+				type: type || "customer",
 			},
 		},
 	});
@@ -91,8 +94,7 @@ export const register = async (formDate: FormData): Promise<AuthResult> => {
 
 	return {
 		status: "success",
-		message:
-			"Registered successfully, PLEASE CONFIRM YOUR EMAIL TO COMPLETE REGISTRATION",
+		message: "Registered successfully, PLEASE VERIFY YOUR EMAIL TO LOGIN",
 	};
 };
 

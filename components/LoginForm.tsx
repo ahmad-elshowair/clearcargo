@@ -14,12 +14,14 @@ import { loginSchema } from "@/lib/schemas/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "./ui/button";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 export const LoginForm = () => {
+	const [isLoading, setIsLoading] = useState(false);
 	const { toast } = useToast();
 	const router = useRouter();
 	const form = useForm<LoginFormData>({
@@ -31,6 +33,7 @@ export const LoginForm = () => {
 	});
 
 	const onSubmit = async (data: LoginFormData) => {
+		setIsLoading(true);
 		const formData = new FormData();
 		formData.append("email", data.email);
 		formData.append("password", data.password);
@@ -102,8 +105,9 @@ export const LoginForm = () => {
 				<section className="flex flex-col gap-10 items-center justify-between">
 					<Button
 						type="submit"
-						className="font-bold w-4/12 text-white bg-gray-500 hover:bg-gray-700">
-						Login
+						className="font-bold w-4/12 text-white bg-gray-500 hover:bg-gray-700"
+						disabled={isLoading}>
+						{isLoading ? "Loading..." : "Login"}
 					</Button>
 					<div className="flex justify-center gap-20 text-sm">
 						<Link

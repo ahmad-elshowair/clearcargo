@@ -18,11 +18,13 @@ import { Input } from "@/components/ui/input";
 import { registerSchema } from "@/lib/schemas/authSchema";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { z } from "zod";
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
+	const [loading, setLoading] = useState(false);
 	const { toast } = useToast();
 	const router = useRouter();
 	const form = useForm<RegisterFormData>({
@@ -38,6 +40,7 @@ export default function RegisterForm() {
 	});
 
 	const onSubmit = async (data: RegisterFormData) => {
+		setLoading(true);
 		const formData = new FormData();
 		Object.entries(data).forEach(([key, value]) => {
 			formData.append(key, value);
@@ -195,13 +198,14 @@ export default function RegisterForm() {
 				<section className="flex items-center gap-10 flex-col md:justify-between">
 					<Button
 						type="submit"
-						className="font-bold w-5/12 text-white bg-gray-500 hover:bg-gray-700">
-						Register
+						className="font-bold w-5/12 text-white bg-gray-500 hover:bg-gray-700"
+						disabled={loading}>
+						{loading ? "Registering..." : "Register"}
 					</Button>
 					<Link
 						href={"/login"}
 						className="text-sm text-slate-500 hover:text-slate-600 hover:underline">
-						Already have an account
+						Already have an account!
 					</Link>
 				</section>
 			</form>
