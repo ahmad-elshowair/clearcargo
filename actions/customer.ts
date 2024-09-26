@@ -12,7 +12,7 @@ const USERS_PER_PAGE = 5;
 const supabaseAdmin = createAdminClient();
 
 // FETCH FILTERED USERS
-export const fetchFilteredUsers = async (
+export const fetchFilteredCustomers = async (
 	query: string = "",
 	page: number = 1,
 	limit: number = USERS_PER_PAGE,
@@ -50,7 +50,7 @@ export const fetchFilteredUsers = async (
 };
 
 // FETCH A USER BY EMAIL.
-export const fetchUserByEmail = async (
+export const fetchCustomerByEmail = async (
 	email: string,
 ): Promise<UserResponse<TUser>> => {
 	try {

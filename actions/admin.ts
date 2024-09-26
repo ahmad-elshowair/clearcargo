@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { AuthResult } from "@/types/auth";
 import { revalidatePath } from "next/cache";
-import { fetchUserByEmail } from "./user";
+import { fetchCustomerByEmail } from "./customer";
 
 export const createCustomer = async (
 	formData: FormData,
@@ -31,7 +31,7 @@ export const createCustomer = async (
 			message: `Unauthorized: Only admins can create customers: ${error?.message}`,
 		};
 	}
-	const UserResponse = await fetchUserByEmail(email);
+	const UserResponse = await fetchCustomerByEmail(email);
 	if (UserResponse.status === "success") {
 		return {
 			status: "error",

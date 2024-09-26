@@ -4,7 +4,7 @@ import configs from "@/configs/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isOver18 } from "@/lib/utils";
 import { AuthResult } from "@/types/auth";
-import { fetchUserByEmail } from "./user";
+import { fetchCustomerByEmail } from "./customer";
 
 export const login = async (formDate: FormData): Promise<AuthResult> => {
 	const supabase = await createSupabaseServerClient();
@@ -14,7 +14,7 @@ export const login = async (formDate: FormData): Promise<AuthResult> => {
 		password: formDate.get("password") as string,
 	};
 
-	const user = await fetchUserByEmail(data.email);
+	const user = await fetchCustomerByEmail(data.email);
 
 	// HANDLE USER NOT FOUND
 	if (user.status === "error" && user.message === "User not found") {
@@ -58,7 +58,7 @@ export const register = async (formDate: FormData): Promise<AuthResult> => {
 	}
 
 	try {
-		const userResponse = await fetchUserByEmail(data.email);
+		const userResponse = await fetchCustomerByEmail(data.email);
 
 		// HANDLE EXISTING USER
 		if (userResponse.status === "success") {
@@ -121,7 +121,7 @@ export const forgotPassword = async (
 
 	const email = formDate.get("email") as string;
 
-	const user = await fetchUserByEmail(email);
+	const user = await fetchCustomerByEmail(email);
 
 	// HANDLE USER NOT FOUND
 	if (user.status === "error" && user.message === "User not found") {

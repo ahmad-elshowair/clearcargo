@@ -1,4 +1,4 @@
-import { fetchFilteredUsers } from "@/actions/user";
+import { fetchFilteredCustomers } from "@/actions/customer";
 import CustomersLoading from "@/app/dashboard/customers/(overview)/loading";
 import CustomersList from "@/components/dashboard/customers/CustomersList";
 import { PaginationControls } from "@/components/Pagination";
@@ -19,7 +19,10 @@ const CustomersPage = async ({
 }) => {
 	const query = searchParams.query || "";
 	const currentPage = Number(searchParams.page) || 1;
-	const { data, totalPages = 1 } = await fetchFilteredUsers(query, currentPage);
+	const { data, totalPages = 1 } = await fetchFilteredCustomers(
+		query,
+		currentPage,
+	);
 
 	return (
 		<section className="flex lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full flex-col gap-3">
