@@ -51,7 +51,7 @@ export const LoginForm = () => {
 				title: "Login",
 				description: result.message,
 			});
-			router.push("/");
+			router.push("/dashboard/shipments");
 		}
 	};
 	return (

@@ -1,12 +1,15 @@
 "use server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { AuthResult } from "@/types/auth";
+import { revalidatePath } from "next/cache";
 import { fetchUserByEmail } from "./user";
 
 export const createCustomer = async (
 	formData: FormData,
 ): Promise<AuthResult> => {
 	const supabase = await createSupabaseServerClient();
+	const adminSupabase = createAdminClient();
 
 	const email = formData.get("email") as string;
 	const password = formData.get("password") as string;
@@ -18,12 +21,14 @@ export const createCustomer = async (
 
 	const {
 		data: { user },
+		error,
 	} = await supabase.auth.getUser();
 
 	if (user?.user_metadata.type !== "admin") {
+		console.error("check admin error", error);
 		return {
 			status: "error",
-			message: "Unauthorized: Only admins can create customers",
+			message: `Unauthorized: Only admins can create customers: ${error?.message}`,
 		};
 	}
 	const UserResponse = await fetchUserByEmail(email);
@@ -34,7 +39,7 @@ export const createCustomer = async (
 		};
 	}
 	try {
-		const { error } = await supabase.auth.admin.createUser({
+		const { error } = await adminSupabase.auth.admin.createUser({
 			email,
 			password,
 			email_confirm: true,
@@ -54,10 +59,10 @@ export const createCustomer = async (
 				message: error.message,
 			};
 		}
-
+		revalidatePath("/dashboard/customers");
 		return {
 			status: "success",
-			message: "Customer created successfully, PLEASE VERIFY EMAIL TO LOGIN",
+			message: "CUSTOMER CREATED SUCCESSFULLY !",
 		};
 	} catch (error) {
 		console.error("Error in createCustomer:", error);

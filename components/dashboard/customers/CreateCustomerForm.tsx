@@ -51,10 +51,12 @@ const CreateCustomerForm = () => {
 				});
 			} else {
 				toast({
-					title: "CUSTOMER CREATED",
+					title: "Create customer",
 					description: result.message,
 				});
+
 				router.push("/dashboard/customers");
+				router.refresh();
 			}
 		} catch (error) {
 			console.error(`Error creating customer: ${error}`);
@@ -99,7 +101,11 @@ const CreateCustomerForm = () => {
 										Surname
 									</FormLabel>
 									<FormControl>
-										<Input placeholder="Adel" {...field} className="bg-white" />
+										<Input
+											placeholder="Mohamed"
+											{...field}
+											className="bg-white"
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>

@@ -7,7 +7,7 @@ import {
 	UserResponse,
 } from "@/types/user";
 
-const USERS_PER_PAGE = 8;
+const USERS_PER_PAGE = 5;
 
 const supabaseAdmin = createAdminClient();
 
