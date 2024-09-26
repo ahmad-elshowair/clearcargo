@@ -37,10 +37,7 @@ export const login = async (formDate: FormData): Promise<AuthResult> => {
 	return { status: "success", message: "Logged in successfully" };
 };
 
-export const register = async (
-	formDate: FormData,
-	type?: string,
-): Promise<AuthResult> => {
+export const register = async (formDate: FormData): Promise<AuthResult> => {
 	const supabase = await createSupabaseServerClient();
 
 	const data = {
@@ -60,42 +57,48 @@ export const register = async (
 		};
 	}
 
-	const user = await fetchUserByEmail(data.email);
+	try {
+		const userResponse = await fetchUserByEmail(data.email);
 
-	// HANDLE EXISTING USER
-	if (user.status === "success") {
-		return { status: "error", message: "Email already exists!" };
-	} else if (user.status === "error" && user.message !== "User not found") {
-		// HANDLE UNEXPECTED ERRORS
-		console.error("Error checking existing user:", user.message);
-		return { status: "error", message: "Error checking existing user" };
-	}
-
-	const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-		email: data.email,
-		password: data.password,
-		options: {
-			data: {
-				first_name: data.first_name,
-				surname: data.surname,
-				date_of_birth: data.date_of_birth,
-				mobile_number: data.mobile_number,
-				type: type || "customer",
+		// HANDLE EXISTING USER
+		if (userResponse.status === "success") {
+			return { status: "error", message: "Email already exists!" };
+		}
+		// AT THIS POINT WE KNOW THE CUSTOMER DOESN'T EXIST, SO WE CAN PROCEED WITH REGISTRATION.
+		const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
+			{
+				email: data.email,
+				password: data.password,
+				options: {
+					data: {
+						first_name: data.first_name,
+						surname: data.surname,
+						date_of_birth: data.date_of_birth,
+						mobile_number: data.mobile_number,
+						type: "customer",
+					},
+				},
 			},
-		},
-	});
+		);
 
-	console.log("Sign Up Response:", signUpData);
+		console.log("Sign Up Response:", signUpData);
 
-	if (signUpError) {
-		console.error("Sign Up Error:", signUpError.message);
-		return { status: "error", message: signUpError.message };
+		if (signUpError) {
+			console.error("Sign Up Error:", signUpError.message);
+			return { status: "error", message: signUpError.message };
+		}
+
+		return {
+			status: "success",
+			message: "Registered successfully, PLEASE VERIFY YOUR EMAIL TO LOGIN",
+		};
+	} catch (error) {
+		console.error("Unexpected error during registration:", error);
+		return {
+			status: "error",
+			message: "An unexpected error occurred during registration",
+		};
 	}
-
-	return {
-		status: "success",
-		message: "Registered successfully, PLEASE VERIFY YOUR EMAIL TO LOGIN",
-	};
 };
 
 export const logout = async (): Promise<AuthResult> => {

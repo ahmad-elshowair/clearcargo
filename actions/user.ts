@@ -66,7 +66,7 @@ export const fetchUserByEmail = async (
 		}
 
 		if (data) {
-			console.log("the user:", data);
+			console.log("USER FOUND:", data);
 			return { status: "success", message: "USER FOUND", data: data as TUser };
 		} else {
 			return { status: "error", message: "USER NOT FOUND", data: null };

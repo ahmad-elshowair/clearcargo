@@ -223,7 +223,7 @@ const CreateCustomerForm = () => {
 										</FormControl>
 										<FormLabel className="flex cursor-pointer items-center gap-1.5 rounded-full bg-green-100 px-3 py-1.5 font-bold text-green-900">
 											<span className="text-md hidden md:inline-block">
-												User
+												Customer
 											</span>
 											<FaRegUser className="h-5 w-5" />
 										</FormLabel>
