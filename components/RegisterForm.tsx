@@ -46,20 +46,31 @@ export default function RegisterForm() {
 			formData.append(key, value);
 		});
 
-		const result = await register(formData);
+		try {
+			const result = await register(formData);
 
-		if (result.status == "error") {
+			if (result.status == "error") {
+				toast({
+					title: "Registration",
+					description: result.message,
+					variant: "destructive",
+				});
+			} else {
+				toast({
+					title: "Registration",
+					description: result.message,
+				});
+				router.push("/login");
+			}
+		} catch (error) {
+			console.error("Error while registering", error);
 			toast({
 				title: "Registration",
-				description: result.message,
+				description: `ERROR WHILE REGISTERING: ${error}`,
 				variant: "destructive",
 			});
-		} else {
-			toast({
-				title: "Registration",
-				description: result.message,
-			});
-			router.push("/login");
+		} finally {
+			setLoading(false);
 		}
 	};
 

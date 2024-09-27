@@ -2,6 +2,7 @@
 import { forgotPassword } from "@/actions/auth";
 import { ForgotPasswordSchema } from "@/lib/schemas/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "./hooks/use-toast";
@@ -19,6 +20,7 @@ import { Input } from "./ui/input";
 type ForgotPasswordFormData = z.infer<typeof ForgotPasswordSchema>;
 
 const ForgotPasswordForm = () => {
+	const [loading, setLoading] = useState(false);
 	const { toast } = useToast();
 	const form = useForm<ForgotPasswordFormData>({
 		resolver: zodResolver(ForgotPasswordSchema),
@@ -28,6 +30,7 @@ const ForgotPasswordForm = () => {
 	});
 
 	const onSubmit = async (data: ForgotPasswordFormData) => {
+		setLoading(true);
 		try {
 			const formData = new FormData();
 			formData.append("email", data.email);
@@ -51,6 +54,8 @@ const ForgotPasswordForm = () => {
 				description: (error as Error).message,
 				variant: "destructive",
 			});
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -83,8 +88,10 @@ const ForgotPasswordForm = () => {
 				<section className="flex flex-col gap-10 items-center justify-between">
 					<Button
 						type="submit"
-						className="font-bold w-4/12 text-white bg-gray-500 hover:bg-gray-700">
-						Send
+						className="font-bold w-4/12 text-white bg-gray-500 hover:bg-gray-700"
+						disabled={loading}
+						aria-disabled={loading}>
+						{loading ? "Sending..." : "Send"}
 					</Button>
 				</section>
 			</form>

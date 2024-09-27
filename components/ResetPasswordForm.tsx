@@ -3,6 +3,7 @@ import { resetPassword } from "@/actions/auth";
 import { ResetPasswordSchema } from "@/lib/schemas/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useToast } from "./hooks/use-toast";
@@ -20,6 +21,7 @@ import { Input } from "./ui/input";
 type ResetPasswordFormData = z.infer<typeof ResetPasswordSchema>;
 
 const ResetPasswordForm = () => {
+	const [loading, setLoading] = useState(false);
 	const { toast } = useToast();
 	const searchParams = useSearchParams();
 	const code = searchParams.get("code");
@@ -29,6 +31,7 @@ const ResetPasswordForm = () => {
 	});
 
 	const onSubmit = async (data: ResetPasswordFormData) => {
+		setLoading(true);
 		if (!code) {
 			toast({
 				title: "RESET PASSWORD",
@@ -64,6 +67,8 @@ const ResetPasswordForm = () => {
 				description: (error as Error).message,
 				variant: "destructive",
 			});
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -119,8 +124,10 @@ const ResetPasswordForm = () => {
 				<section className="flex flex-col gap-10 items-center justify-between">
 					<Button
 						type="submit"
-						className="font-bold w-4/12 text-white bg-gray-500 hover:bg-gray-700">
-						Reset Password
+						className="font-bold w-4/12 text-white bg-gray-500 hover:bg-gray-700"
+						aria-disabled={loading}
+						disabled={loading}>
+						{loading ? "Resetting..." : "Reset Password"}
 					</Button>
 				</section>
 			</form>

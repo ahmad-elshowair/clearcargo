@@ -38,20 +38,32 @@ export const LoginForm = () => {
 		formData.append("email", data.email);
 		formData.append("password", data.password);
 
-		const result = await login(formData);
+		try {
+			const result = await login(formData);
 
-		if (result.status === "error") {
+			if (result.status === "error") {
+				toast({
+					title: "Login",
+					description: result.message,
+					variant: "destructive",
+				});
+			} else {
+				toast({
+					title: "Login",
+					description: result.message,
+				});
+				router.push("/dashboard/shipments");
+			}
+		} catch (error) {
+			console.error("Error while logging in", error);
+
 			toast({
 				title: "Login",
-				description: result.message,
+				description: `ERROR WHILE LOGGING IN: ${error}`,
 				variant: "destructive",
 			});
-		} else {
-			toast({
-				title: "Login",
-				description: result.message,
-			});
-			router.push("/dashboard/shipments");
+		} finally {
+			setIsLoading(false);
 		}
 	};
 	return (
