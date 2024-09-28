@@ -13,13 +13,13 @@ const NavLinks = ({ type }: { type: "customer" | "admin" }) => {
 		{ href: "/", label: "Home", icon: GiHomeGarage },
 		{ href: "/dashboard", label: "Dashboard", icon: RiDashboardHorizontalFill },
 		{
-			href: "/dashboard/shipments",
-			label: "Shipments",
+			href: "/dashboard/clearances",
+			label: "Clearances",
 			icon: FaShippingFast,
 		},
 		{
-			href: "/dashboard/all-shipments",
-			label: "All Shipments",
+			href: "/dashboard/all-clearances",
+			label: "All Clearances",
 			icon: FaShippingFast,
 		},
 		{
@@ -36,7 +36,7 @@ const NavLinks = ({ type }: { type: "customer" | "admin" }) => {
 		if (type !== "admin" && link.href === "/dashboard/customers") {
 			return false;
 		}
-		if (type !== "admin" && link.href === "/dashboard/all-shipments") {
+		if (type !== "admin" && link.href === "/dashboard/all-clearances") {
 			return false;
 		}
 		return true;

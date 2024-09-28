@@ -1,5 +1,5 @@
 const LoadingDashboard = () => {
-	return <div>LoadingDashboard</div>;
+	return <div>loading</div>;
 };
 
 export default LoadingDashboard;
