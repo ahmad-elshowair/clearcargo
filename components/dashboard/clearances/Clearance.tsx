@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaPencil, FaTrashCan } from "react-icons/fa6";
 import { MdOutlinePaid, MdPaid } from "react-icons/md";
@@ -63,7 +64,19 @@ const Clearance = ({
 					</div>
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">VAT Receipt</span>
-						<p className="text-xl font-medium">{vat_receipt}</p>
+						<p className="text-xl font-medium">
+							{vat_receipt ? (
+								<Link
+									href={vat_receipt}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-blue-500 hover:text-blue-700">
+									View Receipt
+								</Link>
+							) : (
+								"N/A"
+							)}
+						</p>
 					</div>
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">Loading Bill</span>

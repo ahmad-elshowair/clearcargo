@@ -123,7 +123,17 @@ const ClearancesList = ({
 											)}
 										</td>
 										<td className="p-3 whitespace-nowrap text-sm">
-											{clearance.vat_receipt}
+											{clearance.vat_receipt ? (
+												<a
+													href={clearance.vat_receipt}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="text-blue-500 hover:text-blue-700">
+													View Receipt
+												</a>
+											) : (
+												"N/A"
+											)}
 										</td>
 										<td className="p-3 whitespace-nowrap text-sm">
 											{clearance.loading_bill}

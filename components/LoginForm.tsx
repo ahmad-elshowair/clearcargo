@@ -52,7 +52,7 @@ export const LoginForm = () => {
 					title: "Login",
 					description: result.message,
 				});
-				router.push("/dashboard/shipments");
+				router.push("/dashboard/clearances");
 			}
 		} catch (error) {
 			console.error("Error while logging in", error);

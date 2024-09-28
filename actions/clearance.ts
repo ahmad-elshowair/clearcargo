@@ -8,6 +8,7 @@ const CLEARANCES_PER_PAGE = 10;
 
 const supabaseAdmin = createAdminClient();
 
+// FETCH ALL CLEARANCES OF THE LOGGED IN USER
 export const fetchUserFilteredClearances = async (
 	query: string = "",
 	page: number = 1,
@@ -44,7 +45,7 @@ export const fetchUserFilteredClearances = async (
 			clearances.length > 0 ? Number(clearances[0].total_count) : 0;
 		const totalPages = Math.ceil(totalCount / limit);
 
-		console.log("the clearances are:", clearances);
+		console.log("all clearances of the user are:", clearances);
 
 		return {
 			status: "success",
@@ -62,6 +63,8 @@ export const fetchUserFilteredClearances = async (
 		};
 	}
 };
+
+// FETCH ALL CLEARANCES
 export const fetchFilteredClearances = async (
 	query: string = "",
 	page: number = 1,
@@ -96,7 +99,7 @@ export const fetchFilteredClearances = async (
 			clearances.length > 0 ? Number(clearances[0].total_count) : 0;
 		const totalPages = Math.ceil(totalCount / limit);
 
-		console.log("the clearances are:", clearances);
+		console.log("all clearances are:", clearances);
 
 		return {
 			status: "success",

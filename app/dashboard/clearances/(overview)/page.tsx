@@ -24,7 +24,7 @@ const page = async ({
 			<section className="flex items-center justify-between gap-2">
 				<Search placeholder="Find a Clearance" />
 				<Link
-					href={"/dashboard/customers/create"}
+					href={"/dashboard/clearances/create"}
 					className="rounded-lg bg-green-500 px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 text-gray-500 focus-visible:outline-green-600 hover:bg-green-600 hover:text-green-50 duration-200 ease-in-out">
 					Create
 				</Link>
