@@ -117,7 +117,7 @@ export const LoginForm = () => {
 				<section className="flex flex-col gap-10 items-center justify-between">
 					<Button
 						type="submit"
-						className="font-bold w-4/12 text-white bg-gray-500 hover:bg-gray-700"
+						className="font-bold w-4/12 text-white bg-gray-700 hover:bg-gray-900"
 						disabled={isLoading}>
 						{isLoading ? "Loading..." : "Login"}
 					</Button>
