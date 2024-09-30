@@ -1,4 +1,5 @@
 "use client";
+import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -47,7 +48,11 @@ const Clearance = ({
 						</div>
 					</div>
 				)}
-				<div className="flex w-full items-center justify-between">
+				<div
+					className={clsx(
+						"flex items-center justify-between",
+						pathname === "/dashboard/all-clearances" ? "w-6/12" : "w-full",
+					)}>
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">VAT Paid</span>
 						{is_vat_paid ? (
@@ -64,23 +69,32 @@ const Clearance = ({
 					</div>
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">VAT Receipt</span>
-						<p className="text-xl font-medium">
-							{vat_receipt ? (
-								<Link
-									href={vat_receipt}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-blue-500 hover:text-blue-700">
-									View Receipt
-								</Link>
-							) : (
-								"N/A"
-							)}
-						</p>
+
+						{vat_receipt ? (
+							<Link
+								href={vat_receipt}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-blue-500 hover:text-blue-700">
+								View Receipt
+							</Link>
+						) : (
+							"N/A"
+						)}
 					</div>
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">Loading Bill</span>
-						<p className="text-xl font-medium">{loading_bill}</p>
+						{loading_bill ? (
+							<Link
+								href={loading_bill}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-blue-500 hover:text-blue-700">
+								View Bill
+							</Link>
+						) : (
+							"N/A"
+						)}
 					</div>
 				</div>
 			</section>
@@ -92,7 +106,17 @@ const Clearance = ({
 					</div>
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">Invoice</span>
-						<p className="text-xl font-medium">{invoice}</p>
+						{invoice ? (
+							<Link
+								href={invoice}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-blue-500 hover:text-blue-700">
+								View Invoice
+							</Link>
+						) : (
+							"N/A"
+						)}
 					</div>
 
 					<div className="flex flex-col items-center">

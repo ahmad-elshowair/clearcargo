@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { TClearanceTable } from "@/types/clearance";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaPencil, FaTrashCan } from "react-icons/fa6";
 import { MdOutlinePaid, MdPaid } from "react-icons/md";
@@ -107,7 +108,19 @@ const ClearancesList = ({
 											{clearance.arrival_date.toString().slice(0, 10)}
 										</td>
 										<td className="p-3 whitespace-nowrap text-sm">
-											{clearance.invoice}
+											{clearance.invoice ? (
+												<div className="flex gap-2">
+													<Link
+														href={clearance.invoice}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="text-sm text-green-500 hover:text-green-700">
+														View Invoice
+													</Link>
+												</div>
+											) : (
+												"N/A"
+											)}
 										</td>
 										<td className="p-3 whitespace-nowrap text-sm">
 											{clearance.is_vat_paid ? (
@@ -124,19 +137,29 @@ const ClearancesList = ({
 										</td>
 										<td className="p-3 whitespace-nowrap text-sm">
 											{clearance.vat_receipt ? (
-												<a
+												<Link
 													href={clearance.vat_receipt}
 													target="_blank"
 													rel="noopener noreferrer"
 													className="text-blue-500 hover:text-blue-700">
 													View Receipt
-												</a>
+												</Link>
 											) : (
 												"N/A"
 											)}
 										</td>
 										<td className="p-3 whitespace-nowrap text-sm">
-											{clearance.loading_bill}
+											{clearance.loading_bill ? (
+												<Link
+													href={clearance.loading_bill}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="text-blue-500 hover:text-blue-700">
+													View Bill
+												</Link>
+											) : (
+												"N/A"
+											)}
 										</td>
 										<td className="whitespace-nowrap px-3">
 											<div className="flex items-center gap-3">
