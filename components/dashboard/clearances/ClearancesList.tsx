@@ -23,6 +23,7 @@ const ClearancesList = ({
 							clearances.map((clearance: TClearanceTable, index) => (
 								<Clearance
 									key={index}
+									id={clearance.clearance_id}
 									is_vat_paid={clearance.is_vat_paid}
 									first_name={clearance.first_name}
 									surname={clearance.surname}
@@ -163,9 +164,14 @@ const ClearancesList = ({
 										</td>
 										<td className="whitespace-nowrap px-3">
 											<div className="flex items-center gap-3">
-												<Button className="bg-green-400 hover:bg-green-500">
-													<FaPencil />
-												</Button>
+												{pathname === "/dashboard/all-clearances" && (
+													<Link
+														href={`/dashboard/${clearance.clearance_id}/edit`}>
+														<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+															<FaPencil />
+														</button>
+													</Link>
+												)}
 												<Button className="bg-red-400 hover:bg-red-500">
 													<FaTrashCan />
 												</Button>

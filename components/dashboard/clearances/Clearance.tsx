@@ -7,6 +7,7 @@ import { FaPencil, FaTrashCan } from "react-icons/fa6";
 import { MdOutlinePaid, MdPaid } from "react-icons/md";
 
 const Clearance = ({
+	id,
 	first_name,
 	surname,
 	is_vat_paid,
@@ -17,6 +18,7 @@ const Clearance = ({
 	email,
 	port_name,
 }: {
+	id: string;
 	first_name: string;
 	surname: string;
 	is_vat_paid: boolean;
@@ -126,9 +128,13 @@ const Clearance = ({
 				</div>
 
 				<div className="flex justify-end gap-2 w-1/3">
-					<button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-						<FaPencil />
-					</button>
+					{pathname === "/dashboard/all-clearances" && (
+						<Link href={`/dashboard/${id}/edit`}>
+							<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+								<FaPencil />
+							</button>
+						</Link>
+					)}
 					<button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
 						<FaTrashCan />
 					</button>
