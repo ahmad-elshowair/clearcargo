@@ -60,10 +60,14 @@ export const uploadFile = async (file: File, folder: string) => {
 
 		console.log("data of uploading file: ", uploadData);
 
+		const { data: publicUrlData } = supabase.storage
+			.from("ClearCargo")
+			.getPublicUrl(fileName);
+
 		return {
 			status: "success",
 			message: "FILE UPLOADED SUCCESSFULLY",
-			url: uploadData.path,
+			url: publicUrlData.publicUrl,
 		};
 	} catch (error) {
 		console.error("ERROR UPLOADING FILE: ", error);
