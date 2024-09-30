@@ -7,7 +7,7 @@ export const Logo = ({ fontSize }: { fontSize?: string }) => {
 		<div className="flex lg:flex-col leading-none lg:items-start items-center">
 			<Image
 				src={
-					"https://mcqcttzcvnupvxeptsyf.supabase.co/storage/v1/object/public/ClreaCargo/images/ClearCargo-logo.png"
+					"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClearCargo/images/ClearCargo-logo.png"
 				}
 				width={170}
 				height={30}

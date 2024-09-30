@@ -34,7 +34,7 @@ const Clearance = ({
 					<div className="flex items-center gap-2">
 						<Image
 							src={
-								"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClreaCargo/images/29-8-2024-367-avatar.png"
+								"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClearCargo/images/avatar.png"
 							}
 							height={38}
 							width={38}

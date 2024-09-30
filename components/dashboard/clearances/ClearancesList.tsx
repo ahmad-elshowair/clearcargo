@@ -19,9 +19,9 @@ const ClearancesList = ({
 				<div className="rounded-lg bg-green-100 p-2 md:mt-0">
 					<div className="lg:hidden">
 						{clearances ? (
-							clearances.map((clearance: TClearanceTable) => (
+							clearances.map((clearance: TClearanceTable, index) => (
 								<Clearance
-									key={clearance.clearance_id}
+									key={index}
 									is_vat_paid={clearance.is_vat_paid}
 									first_name={clearance.first_name}
 									surname={clearance.surname}
@@ -73,16 +73,16 @@ const ClearancesList = ({
 						</thead>
 						<tbody className="bg-white">
 							{clearances &&
-								clearances.map((clearance) => (
+								clearances.map((clearance, index) => (
 									<tr
-										className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
-										key={clearance.clearance_id}>
+										key={index}
+										className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
 										{pathname === "/dashboard/all-clearances" && (
 											<td className="py-3 pl-6 pr-3 whitespace-nowrap">
 												<div className="flex items-center gap-2">
 													<Image
 														src={
-															"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClreaCargo/images/29-8-2024-367-avatar.png"
+															"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClearCargo/images/avatar.png"
 														}
 														height={40}
 														width={40}

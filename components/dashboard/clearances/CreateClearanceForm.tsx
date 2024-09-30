@@ -1,4 +1,5 @@
 "use client";
+import { createClearance } from "@/actions/clearance";
 import { FileInputField } from "@/components/FileInputField";
 import { useToast } from "@/components/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -28,17 +29,21 @@ import {
 	CreateClearanceInput,
 	CreateClearanceSchema,
 } from "@/lib/schemas/clearance";
+import { uploadFile } from "@/lib/supabase/uploadFile";
 import { cn } from "@/lib/utils";
 import { Port } from "@/types/port";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdAttachMoney, MdOutlineMoneyOff } from "react-icons/md";
 
 export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
-	const [isLoading, setIsLoading] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const router = useRouter();
+	const { toast } = useToast();
 
 	const form = useForm<CreateClearanceInput>({
 		resolver: zodResolver(CreateClearanceSchema),
@@ -52,37 +57,82 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 		},
 	});
 
-	// const router = useRouter();
-	const { toast } = useToast();
-
 	// TODO: Create clearance
-	function onSubmit(data: CreateClearanceInput) {
+	const onSubmit = async (data: CreateClearanceInput) => {
 		console.log("onSubmit function called with data:", data);
+		setIsSubmitting(true);
 		try {
-			setIsLoading(true);
+			// UPLOAD THE CLEARANCE FILES TO SUPABASE STORAGE
+			console.log("Attempting to upload files...");
+			const fileUploads = await Promise.all([
+				data.invoice instanceof File
+					? uploadFile(data.invoice, "invoices")
+					: { status: "success", url: data.invoice, message: null },
+				data.vat_receipt instanceof File
+					? uploadFile(data.vat_receipt, "vat_receipts")
+					: { status: "success", url: data.vat_receipt, message: null },
+				data.loading_bill instanceof File
+					? uploadFile(data.loading_bill, "loading_bills")
+					: { status: "success", url: data.loading_bill, message: null },
+			]);
 
-			toast({
-				title: "You submitted the following values:",
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<code className="text-white">{JSON.stringify(data, null, 2)}</code>
-					</pre>
-				),
+			console.log("File upload results:", fileUploads);
+			const [invoiceResult, vatReceiptResult, loadingBillResult] =
+				fileUploads.map((file) => file.url);
+
+			const uploadErrors = fileUploads.filter(
+				(file) => file.status === "error",
+			);
+
+			if (uploadErrors.length > 0) {
+				const errorMessages = uploadErrors
+					.map((error) => error.message)
+					.filter((message) => message !== null)
+					.join(" - ");
+
+				toast({
+					title: "UPLOADING FILES",
+					description: errorMessages,
+					variant: "destructive",
+				});
+
+				console.error("UPLOADING FILES ERROR", errorMessages);
+				return;
+			}
+
+			const result = await createClearance({
+				...data,
+				arrival_date: data.arrival_date.toISOString(),
+				invoice: invoiceResult,
+				vat_receipt: vatReceiptResult,
+				loading_bill: loadingBillResult,
 			});
+
+			if (result.status === "error") {
+				console.error("ERROR IN CLEARANCE CREATION", result.message);
+				toast({
+					title: "CREATION OF CLEARANCE",
+					description: result.message,
+					variant: "destructive",
+				});
+			} else {
+				toast({
+					title: "CREATION OF CLEARANCE",
+					description: result.message,
+				});
+				router.push("/dashboard/clearances");
+			}
 		} catch (error) {
 			console.error("ERROR IN FORM SUBMISSION", error);
 			toast({
 				title: "Error in form submission",
-				description: (
-					<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-						<p className="text-red-500">{(error as Error).message}</p>
-					</pre>
-				),
+				description: (error as Error).message,
+				variant: "destructive",
 			});
 		} finally {
-			setIsLoading(false);
+			setIsSubmitting(false);
 		}
-	}
+	};
 
 	return (
 		<Form {...form}>
@@ -257,9 +307,9 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 					<Button
 						type="submit"
 						className="h-fit rounded-md bg-green-500 py-4 px-8 text-sm font-medium transition-colors hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-50 active:bg-green-600 duration-200 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 text-green-50"
-						aria-disabled={isLoading}
+						aria-disabled={isSubmitting}
 						onClick={() => console.log("Button clicked")}>
-						{isLoading ? "Creating..." : "Create"}
+						{isSubmitting ? "Creating..." : "Create"}
 					</Button>
 				</section>
 			</form>

@@ -12,3 +12,12 @@ export type TClearanceTable = {
 	port_name: string;
 	total_count: number;
 };
+
+export type TClearance = {
+	port_id: string;
+	is_vat_paid: boolean;
+	arrival_date: string;
+	invoice: string | null;
+	loading_bill: string | null;
+	vat_receipt: string | null;
+};
