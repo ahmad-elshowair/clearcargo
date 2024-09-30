@@ -31,7 +31,7 @@ export function FileInputField<T extends FieldValues>({
 			control={form.control}
 			name={name}
 			render={({ field }) => (
-				<FormItem className="w-1/3">
+				<FormItem className="w-1/2">
 					<FormLabel className="text-md font-bold text-green-900">
 						{label}
 					</FormLabel>

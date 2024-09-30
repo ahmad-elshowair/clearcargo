@@ -57,6 +57,9 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 		},
 	});
 
+	// WATCHING FOR VAT PAYMENT
+	const isVatPaid = form.watch("is_vat_paid");
+
 	// TODO: Create clearance
 	const onSubmit = async (data: CreateClearanceInput) => {
 		console.log("onSubmit function called with data:", data);
@@ -238,65 +241,69 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 							label="Loading Bill"
 							form={form}
 						/>
-						<FileInputField
-							name="vat_receipt"
-							label="VAT Receipt"
-							form={form}
-						/>
 					</div>
 
-					<fieldset className="mb-3">
-						<legend className="mb-3 block text-md font-bold text-green-900">
-							Is VAT Paid?
-						</legend>
-						<section className="flex flex-col md:flex-row gap-10 items-center rounded-md border border-green-200 bg-white px-[14px] py-3">
-							<FormField
-								control={form.control}
-								name="is_vat_paid"
-								render={({ field }) => (
-									<FormItem className="flex items-center gap-4 space-y-0">
-										<FormControl>
-											<Input
-												type="radio"
-												className="w-6 h-6"
-												checked={field.value === true}
-												onChange={() => field.onChange(true)}
-											/>
-										</FormControl>
-										<FormLabel className="flex cursor-pointer items-center gap-1.5 rounded-full bg-green-100 px-3 py-1.5 font-bold text-green-900">
-											<span className="text-md hidden md:inline-block">
-												Yes
-											</span>
-											<MdAttachMoney className="h-5 w-5" />
-										</FormLabel>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+					<section className="flex w-full justify-between items-center mb-10 gap-3">
+						<fieldset className="mb-3 w-1/2">
+							<legend className="mb-3 block text-md font-bold text-green-900">
+								Is VAT Paid?
+							</legend>
+							<section className="flex flex-col md:flex-row gap-10 items-center ">
+								<FormField
+									control={form.control}
+									name="is_vat_paid"
+									render={({ field }) => (
+										<FormItem className="flex items-center gap-4 space-y-0">
+											<FormControl>
+												<Input
+													type="radio"
+													className="w-6 h-6"
+													checked={field.value === true}
+													onChange={() => field.onChange(true)}
+												/>
+											</FormControl>
+											<FormLabel className="flex cursor-pointer items-center gap-1.5 rounded-full bg-green-300 px-3 py-1.5 font-bold text-green-900">
+												<span className="text-md hidden md:inline-block">
+													Yes
+												</span>
+												<MdAttachMoney className="h-5 w-5" />
+											</FormLabel>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 
-							<FormField
-								control={form.control}
-								name="is_vat_paid"
-								render={({ field }) => (
-									<FormItem className="flex items-center gap-4 space-y-0">
-										<FormControl>
-											<Input
-												type="radio"
-												className="w-6 h-6"
-												checked={field.value === false}
-												onChange={() => field.onChange(false)}
-											/>
-										</FormControl>
-										<FormLabel className="flex cursor-pointer items-center gap-1.5 rounded-full bg-green-100 px-3 py-1.5 font-bold text-green-900">
-											<span className="hidden md:inline">No</span>
-											<MdOutlineMoneyOff className="h-5 w-5" />
-										</FormLabel>
-										<FormMessage />
-									</FormItem>
-								)}
+								<FormField
+									control={form.control}
+									name="is_vat_paid"
+									render={({ field }) => (
+										<FormItem className="flex items-center gap-4 space-y-0">
+											<FormControl>
+												<Input
+													type="radio"
+													className="w-6 h-6"
+													checked={field.value === false}
+													onChange={() => field.onChange(false)}
+												/>
+											</FormControl>
+											<FormLabel className="flex cursor-pointer items-center gap-1.5 rounded-full bg-green-300 px-3 py-1.5 font-bold text-green-900">
+												<span className="hidden md:inline">No</span>
+												<MdOutlineMoneyOff className="h-5 w-5" />
+											</FormLabel>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</section>
+						</fieldset>
+						{isVatPaid && (
+							<FileInputField
+								name="vat_receipt"
+								label="VAT Receipt"
+								form={form}
 							/>
-						</section>
-					</fieldset>
+						)}
+					</section>
 				</section>
 				<section className="mt-4 flex justify-end gap-4">
 					<Link
