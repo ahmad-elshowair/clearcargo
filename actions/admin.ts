@@ -1,15 +1,15 @@
 "use server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { fetchCustomerByEmail } from "@/actions/customer";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { AuthResult } from "@/types/auth";
 import { revalidatePath } from "next/cache";
-import { fetchCustomerByEmail } from "./customer";
 
 export const createCustomer = async (
 	formData: FormData,
 ): Promise<AuthResult> => {
 	const supabase = await createSupabaseServerClient();
-	const adminSupabase = createAdminClient();
+	const adminSupabase = createSupabaseAdminClient();
 
 	const email = formData.get("email") as string;
 	const password = formData.get("password") as string;
@@ -71,4 +71,25 @@ export const createCustomer = async (
 			message: `An unexpected error occurred: ${error} `,
 		};
 	}
+};
+
+export const fetchAllAdmins = async () => {
+	const supabase = createSupabaseAdminClient();
+	const { data: admins, error } = await supabase.rpc("fetch_admin_users");
+	if (error) {
+		console.error("Error fetching customers:", error);
+		return {
+			status: "error",
+			message: error.message,
+			data: null,
+		};
+	}
+
+	console.log("FETCHING ALL CUSTOMERS:", admins);
+
+	return {
+		status: "success",
+		data: admins,
+		message: "FETCHED ALL ADMINS SUCCESSFULLY !",
+	};
 };

@@ -1,5 +1,5 @@
 "use server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
 	PaginatedResponse,
 	TUser,
@@ -9,7 +9,7 @@ import {
 
 const USERS_PER_PAGE = 5;
 
-const supabaseAdmin = createAdminClient();
+const supabaseAdmin = createSupabaseAdminClient();
 
 // FETCH FILTERED USERS
 export const fetchFilteredCustomers = async (

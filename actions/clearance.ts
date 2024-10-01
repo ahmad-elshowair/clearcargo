@@ -1,12 +1,12 @@
 "use server";
 
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { TClearance, TClearanceTable } from "@/types/clearance";
 
 const CLEARANCES_PER_PAGE = 10;
 
-const supabaseAdmin = createAdminClient();
+const supabaseAdmin = createSupabaseAdminClient();
 
 // FETCH ALL CLEARANCES OF THE LOGGED IN USER
 export const fetchUserFilteredClearances = async (

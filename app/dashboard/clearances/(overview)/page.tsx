@@ -14,10 +14,9 @@ const page = async ({
 	const query = searchParams.query || "";
 	const currentPage = Number(searchParams.page) || 1;
 
-	const { data, totalPages = 1 } = await fetchUserFilteredClearances(
-		query,
-		currentPage,
-	);
+	const { data: clearances, totalPages = 1 } =
+		await fetchUserFilteredClearances(query, currentPage);
+
 	return (
 		<section className="flex lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full flex-col gap-3">
 			<h1 className="md:mb-20 md:mt-10 text-3xl font-bold">Clearances</h1>
@@ -30,7 +29,7 @@ const page = async ({
 				</Link>
 			</section>
 			<Suspense fallback={<Loading />}>
-				<ClearancesList clearances={data} />
+				<ClearancesList clearances={clearances} />
 			</Suspense>
 			<section className="mt-5 flex w-full justify-center">
 				<PaginationControls

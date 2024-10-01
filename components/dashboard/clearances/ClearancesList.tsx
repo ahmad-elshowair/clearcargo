@@ -115,7 +115,7 @@ const ClearancesList = ({
 														href={clearance.invoice}
 														target="_blank"
 														rel="noopener noreferrer"
-														className="text-sm text-green-500 hover:text-green-700">
+														className="text-sm text-blue-500 hover:text-blue-700">
 														View Invoice
 													</Link>
 												</div>
@@ -167,9 +167,9 @@ const ClearancesList = ({
 												{pathname === "/dashboard/all-clearances" && (
 													<Link
 														href={`/dashboard/${clearance.clearance_id}/edit`}>
-														<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+														<Button className="bg-green-500 hover:bg-green-700 text-white font-bold">
 															<FaPencil />
-														</button>
+														</Button>
 													</Link>
 												)}
 												<Button className="bg-red-400 hover:bg-red-500">
