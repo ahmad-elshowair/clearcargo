@@ -47,8 +47,6 @@ export const fetchUserFilteredClearances = async (
 			clearances.length > 0 ? Number(clearances[0].total_count) : 0;
 		const totalPages = Math.ceil(totalCount / limit);
 
-		console.log("all clearances of the user are:", clearances);
-
 		return {
 			status: "success",
 			message: "Clearances fetched successfully",
@@ -100,8 +98,6 @@ export const fetchFilteredClearances = async (
 		const totalCount =
 			clearances.length > 0 ? Number(clearances[0].total_count) : 0;
 		const totalPages = Math.ceil(totalCount / limit);
-
-		console.log("all clearances are:", clearances);
 
 		return {
 			status: "success",
@@ -199,6 +195,113 @@ export const createClearance = async (clearance: TClearance) => {
 			status: "error",
 			message: (error as Error).message,
 			data: null,
+		};
+	}
+};
+
+// FETCH A CLEARANCE BY ID
+export const fetchClearanceById = async (id: string) => {
+	try {
+		const supabase = await createSupabaseServerClient();
+
+		const { data, error } = await supabase
+			.from("clearances")
+			.select("*")
+			.eq("id", id);
+
+		if (error) {
+			console.error("ERROR FETCHING CLEARANCE BY ID", error.message);
+			return {
+				status: "error",
+				message: error.message,
+				data: null,
+			};
+		}
+
+		const clearance = data[0] as TClearance;
+		return {
+			status: "success",
+			message: "CLEARANCE FETCHED SUCCESSFULLY",
+			data: clearance,
+		};
+	} catch (error) {
+		console.error("ERROR FETCHING CLEARANCE BY ID", error);
+		return {
+			status: "error",
+			message: (error as Error).message,
+			data: null,
+		};
+	}
+};
+
+// DELETE A CLEARANCE
+export const deleteClearance = async (id: string) => {
+	try {
+		const supabase = await createSupabaseServerClient();
+
+		// FETCH THE DELETED CLEARANCE
+		const clearanceResult = await fetchClearanceById(id);
+
+		if (clearanceResult.status === "error") {
+			console.error("ERROR FETCHING CLEARANCE", clearanceResult.message);
+			return {
+				status: "error",
+				message: clearanceResult.message,
+				data: null,
+			};
+		}
+		const clearance = clearanceResult.data;
+		const {
+			data: { user },
+			error: userError,
+		} = await supabase.auth.getUser();
+
+		if (userError) {
+			console.error("ERROR GETTING USER ID", userError.message);
+			return {
+				status: "error",
+				message: userError.message,
+				data: null,
+			};
+		}
+
+		const userType = user?.user_metadata.type as "admin" | "customer";
+
+		const user_id = user?.id;
+
+		// CHECK IF THE USER IS AN ADMIN OR A CUSTOMER
+		if (userType === "customer" && clearance?.created_by !== user_id) {
+			console.error("ERROR: USER IS NOT AUTHORIZED TO DELETE THIS CLEARANCE");
+			return {
+				status: "error",
+				message: "USER IS NOT AUTHORIZED TO DELETE THIS CLEARANCE",
+				data: null,
+			};
+		}
+
+		// DELETE THE CLEARANCE IN SUPABASE
+		const { error: clearanceError } = await supabase
+			.from("clearances")
+			.delete()
+			.match({ id });
+
+		if (clearanceError) {
+			console.error("ERROR DELETING CLEARANCE", clearanceError.message);
+			return {
+				status: "error",
+				message: clearanceError.message,
+			};
+		}
+
+		return {
+			status: "success",
+			message: "CLEARANCE DELETED SUCCESSFULLY",
+		};
+	} catch (error) {
+		console.error("ERROR DELETING CLEARANCE", error);
+		return {
+			status: "error",
+			message: (error as Error).message,
 		};
 	}
 };
