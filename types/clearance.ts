@@ -23,3 +23,11 @@ export type TClearance = {
 	loading_bill: string | null;
 	vat_receipt: string | null;
 };
+
+export type TClearanceResult = {
+	status: "error" | "success";
+	message: string;
+	data?: TClearanceTable | TClearance;
+	currentPage?: number;
+	totalPages?: number;
+};

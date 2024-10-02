@@ -3,7 +3,11 @@
 import { sendEmailNotification } from "@/lib/email";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { TClearance, TClearanceTable } from "@/types/clearance";
+import {
+	TClearance,
+	TClearanceResult,
+	TClearanceTable,
+} from "@/types/clearance";
 import { fetchAllAdmins } from "./admin";
 
 const CLEARANCES_PER_PAGE = 10;
@@ -17,7 +21,7 @@ export const fetchUserFilteredClearances = async (
 	limit: number = CLEARANCES_PER_PAGE,
 	sortColumn: string = "created_at",
 	sortDirection: "ASC" | "DESC" = "DESC",
-) => {
+): Promise<TClearanceResult> => {
 	try {
 		const supabase = await createSupabaseServerClient();
 
@@ -37,20 +41,17 @@ export const fetchUserFilteredClearances = async (
 			return {
 				status: "error",
 				message: error.message,
-				data: null,
 			};
 		}
 
-		const clearances = data as TClearanceTable[];
-
 		const totalCount =
-			clearances.length > 0 ? Number(clearances[0].total_count) : 0;
+			(data as TClearanceTable[]).length > 0 ? Number(data[0].total_count) : 0;
 		const totalPages = Math.ceil(totalCount / limit);
 
 		return {
 			status: "success",
 			message: "Clearances fetched successfully",
-			data: clearances,
+			data: data,
 			currentPage: page,
 			totalPages: totalPages,
 		};
@@ -59,7 +60,6 @@ export const fetchUserFilteredClearances = async (
 		return {
 			status: "error",
 			message: (error as Error).message,
-			data: null,
 		};
 	}
 };
@@ -71,7 +71,7 @@ export const fetchFilteredClearances = async (
 	limit: number = CLEARANCES_PER_PAGE,
 	sortColumn: string = "created_at",
 	sortDirection: "ASC" | "DESC" = "DESC",
-) => {
+): Promise<TClearanceResult> => {
 	try {
 		const { data, error } = await supabaseAdmin.rpc(
 			"fetch_filtered_clearances",
@@ -89,20 +89,17 @@ export const fetchFilteredClearances = async (
 			return {
 				status: "error",
 				message: error.message,
-				data: null,
 			};
 		}
 
-		const clearances = data as TClearanceTable[];
-
 		const totalCount =
-			clearances.length > 0 ? Number(clearances[0].total_count) : 0;
+			(data as TClearanceTable[]).length > 0 ? Number(data[0].total_count) : 0;
 		const totalPages = Math.ceil(totalCount / limit);
 
 		return {
 			status: "success",
 			message: "Clearances fetched successfully",
-			data: clearances,
+			data: data,
 			currentPage: page,
 			totalPages: totalPages,
 		};
@@ -111,7 +108,6 @@ export const fetchFilteredClearances = async (
 		return {
 			status: "error",
 			message: (error as Error).message,
-			data: null,
 		};
 	}
 };
@@ -200,7 +196,9 @@ export const createClearance = async (clearance: TClearance) => {
 };
 
 // FETCH A CLEARANCE BY ID
-export const fetchClearanceById = async (id: string) => {
+export const fetchClearanceById = async (
+	id: string,
+): Promise<TClearanceResult> => {
 	try {
 		const supabase = await createSupabaseServerClient();
 
@@ -214,7 +212,6 @@ export const fetchClearanceById = async (id: string) => {
 			return {
 				status: "error",
 				message: error.message,
-				data: null,
 			};
 		}
 
@@ -229,13 +226,14 @@ export const fetchClearanceById = async (id: string) => {
 		return {
 			status: "error",
 			message: (error as Error).message,
-			data: null,
 		};
 	}
 };
 
 // DELETE A CLEARANCE
-export const deleteClearance = async (id: string) => {
+export const deleteClearance = async (
+	id: string,
+): Promise<TClearanceResult> => {
 	try {
 		const supabase = await createSupabaseServerClient();
 
@@ -247,35 +245,35 @@ export const deleteClearance = async (id: string) => {
 			return {
 				status: "error",
 				message: clearanceResult.message,
-				data: null,
 			};
 		}
 		const clearance = clearanceResult.data;
+
+		// GET THE USER THE LOGGED IN USER
 		const {
 			data: { user },
 			error: userError,
 		} = await supabase.auth.getUser();
 
+		// RETURN ERROR IF FAILED TO GET THE USER
 		if (userError) {
 			console.error("ERROR GETTING USER ID", userError.message);
 			return {
 				status: "error",
 				message: userError.message,
-				data: null,
 			};
 		}
 
-		const userType = user?.user_metadata.type as "admin" | "customer";
+		const user_type = user?.user_metadata.type as "admin" | "customer";
 
 		const user_id = user?.id;
 
 		// CHECK IF THE USER IS AN ADMIN OR A CUSTOMER
-		if (userType === "customer" && clearance?.created_by !== user_id) {
+		if (user_type === "customer" && clearance?.created_by !== user_id) {
 			console.error("ERROR: USER IS NOT AUTHORIZED TO DELETE THIS CLEARANCE");
 			return {
 				status: "error",
 				message: "USER IS NOT AUTHORIZED TO DELETE THIS CLEARANCE",
-				data: null,
 			};
 		}
 
