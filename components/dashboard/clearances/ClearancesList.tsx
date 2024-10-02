@@ -19,7 +19,7 @@ const ClearancesList = ({
 			<div className="inline-block min-w-full align-middle">
 				<div className="rounded-lg bg-green-100 p-2 md:mt-0">
 					<div className="lg:hidden">
-						{clearances ? (
+						{clearances && clearances?.length > 0 ? (
 							clearances.map((clearance: TClearanceTable, index) => (
 								<Clearance
 									key={index}
@@ -36,46 +36,46 @@ const ClearancesList = ({
 								/>
 							))
 						) : (
-							<p className="text-4xl text-red-100 border rounded-md p-4 bg-red-200">
+							<p className="text-4xl text-center text-red-100 border rounded-md p-4 bg-red-200">
 								No Clearances Found
 							</p>
 						)}
 					</div>
-					<table className="hidden lg:table min-w-full text-gray-900">
-						<thead className="rounded-lg text-left text-sm font-medium">
-							<tr>
-								{pathname === "/dashboard/all-clearances" && (
+					{clearances && clearances.length > 0 ? (
+						<table className="hidden lg:table min-w-full text-gray-900">
+							<thead className="rounded-lg text-left text-sm font-medium">
+								<tr>
+									{pathname === "/dashboard/all-clearances" && (
+										<th scope="col" className="px-4 py-5 font-medium">
+											Customer
+										</th>
+									)}
 									<th scope="col" className="px-4 py-5 font-medium">
-										Customer
+										Arrival Port
 									</th>
-								)}
-								<th scope="col" className="px-4 py-5 font-medium">
-									Arrival Port
-								</th>
 
-								<th scope="col" className="px-4 py-5 font-medium">
-									Arrival Date
-								</th>
-								<th scope="col" className="px-4 py-5 font-medium">
-									Invoice
-								</th>
-								<th scope="col" className="px-4 py-5 font-medium">
-									VAT Paid?
-								</th>
-								<th scope="col" className="px-4 py-5 font-medium">
-									VAT Receipt
-								</th>
-								<th scope="col" className="px-4 py-5 font-medium">
-									Loading Bil
-								</th>
-								<th scope="col" className="px-4 py-5 font-medium">
-									Actions
-								</th>
-							</tr>
-						</thead>
-						<tbody className="bg-white">
-							{clearances &&
-								clearances.map((clearance, index) => (
+									<th scope="col" className="px-4 py-5 font-medium">
+										Arrival Date
+									</th>
+									<th scope="col" className="px-4 py-5 font-medium">
+										Invoice
+									</th>
+									<th scope="col" className="px-4 py-5 font-medium">
+										VAT Paid?
+									</th>
+									<th scope="col" className="px-4 py-5 font-medium">
+										VAT Receipt
+									</th>
+									<th scope="col" className="px-4 py-5 font-medium">
+										Loading Bil
+									</th>
+									<th scope="col" className="px-4 py-5 font-medium">
+										Actions
+									</th>
+								</tr>
+							</thead>
+							<tbody className="bg-white">
+								{clearances.map((clearance, index) => (
 									<tr
 										key={index}
 										className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
@@ -179,8 +179,15 @@ const ClearancesList = ({
 										</td>
 									</tr>
 								))}
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					) : (
+						<section className="w-full justify-center items-center hidden lg:flex">
+							<p className="text-4xl text-red-100 border rounded-md p-4 bg-red-200">
+								No Clearances Found or you have not yet added any clearances.
+							</p>
+						</section>
+					)}
 				</div>
 			</div>
 		</section>

@@ -1,8 +1,10 @@
 "use server";
 
+import { sendEmailNotification } from "@/lib/email";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { TClearance, TClearanceTable } from "@/types/clearance";
+import { fetchAllAdmins } from "./admin";
 
 const CLEARANCES_PER_PAGE = 10;
 
@@ -136,13 +138,16 @@ export const createClearance = async (clearance: TClearance) => {
 		}
 
 		// CREATE THE CLEARANCE IN SUPABASE
-		const { data, error } = await supabase.rpc("create_clearance", {
-			clearance_data: {
-				...clearance,
-				arrival_date: new Date(clearance.arrival_date).toISOString(),
-				created_by: user.user.id,
+		const { data: clearanceData, error } = await supabase.rpc(
+			"create_clearance",
+			{
+				clearance_data: {
+					...clearance,
+					arrival_date: new Date(clearance.arrival_date).toISOString(),
+					created_by: user.user.id,
+				},
 			},
-		});
+		);
 
 		if (error) {
 			console.error("ERROR CREATING CLEARANCE", error.message);
@@ -153,12 +158,40 @@ export const createClearance = async (clearance: TClearance) => {
 			};
 		}
 
-		console.log("clearance created:", data);
+		console.log("clearance created:", clearanceData);
+
+		// FETCH ALL ADMINS' EMAILS.
+		const adminResult = await fetchAllAdmins();
+		if (adminResult.status === "error") {
+			console.error("ERROR FETCHING ADMINS' EMAILS", adminResult.message);
+			return {
+				status: "error",
+				message: adminResult.message,
+				data: null,
+			};
+		}
+
+		const adminEmails = adminResult.data
+			? adminResult.data.map((admin) => admin.email)
+			: [];
+
+		const emailResult = await sendEmailNotification(adminEmails, clearanceData);
+
+		if (emailResult.status === "error") {
+			console.error("ERROR SENDING EMAIL NOTIFICATION", emailResult.message);
+			return {
+				status: "error",
+				message: emailResult.message,
+				data: null,
+			};
+		}
+
+		// SEND EMAIL NOTIFICATION TO ALL ADMINS
 
 		return {
 			status: "success",
 			message: "CLEARANCE CREATED SUCCESSFULLY",
-			data: data,
+			data: clearanceData as TClearance,
 		};
 	} catch (error) {
 		console.error("ERROR CREATING CLEARANCE", error);

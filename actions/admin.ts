@@ -2,6 +2,7 @@
 import { fetchCustomerByEmail } from "@/actions/customer";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { TAdmin } from "@/types/admin";
 import { AuthResult } from "@/types/auth";
 import { revalidatePath } from "next/cache";
 
@@ -73,23 +74,34 @@ export const createCustomer = async (
 	}
 };
 
-export const fetchAllAdmins = async () => {
-	const supabase = createSupabaseAdminClient();
-	const { data: admins, error } = await supabase.rpc("fetch_admin_users");
-	if (error) {
-		console.error("Error fetching customers:", error);
+export const fetchAllAdmins = async (): Promise<{
+	status: "success" | "error";
+	data?: TAdmin[];
+	message: string;
+}> => {
+	try {
+		const supabase = createSupabaseAdminClient();
+		const { data: admins, error } = await supabase.rpc("fetch_admin_users");
+		if (error) {
+			console.error("Error fetching customers:", error);
+			return {
+				status: "error",
+				message: error.message,
+			};
+		}
+
+		console.log("FETCHING ALL CUSTOMERS:", admins);
+
+		return {
+			status: "success",
+			data: admins as TAdmin[],
+			message: "FETCHED ALL ADMINS SUCCESSFULLY !",
+		};
+	} catch (error) {
+		console.error("Error in fetchAllAdmins:", error);
 		return {
 			status: "error",
-			message: error.message,
-			data: null,
+			message: `An unexpected error occurred: ${error} `,
 		};
 	}
-
-	console.log("FETCHING ALL CUSTOMERS:", admins);
-
-	return {
-		status: "success",
-		data: admins,
-		message: "FETCHED ALL ADMINS SUCCESSFULLY !",
-	};
 };
