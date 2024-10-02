@@ -2,7 +2,6 @@ import { z } from "zod";
 
 export const CreateClearanceSchema = z
 	.object({
-		clearance_id: z.string().uuid(),
 		port_id: z.string().uuid(),
 		is_vat_paid: z.boolean(),
 		vat_receipt: z.any().nullable().optional(),

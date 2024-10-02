@@ -60,13 +60,10 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 	// WATCHING FOR VAT PAYMENT
 	const isVatPaid = form.watch("is_vat_paid");
 
-	// TODO: Create clearance
 	const onSubmit = async (data: CreateClearanceInput) => {
-		console.log("onSubmit function called with data:", data);
 		setIsSubmitting(true);
 		try {
 			// UPLOAD THE CLEARANCE FILES TO SUPABASE STORAGE
-			console.log("Attempting to upload files...");
 			const fileUploads = await Promise.all([
 				data.invoice instanceof File
 					? uploadFile(data.invoice, "invoices")
@@ -79,14 +76,16 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 					: { status: "success", url: data.loading_bill, message: null },
 			]);
 
-			console.log("File upload results:", fileUploads);
+			// GET THE UPLOADED FILE URLS
 			const [invoiceResult, vatReceiptResult, loadingBillResult] =
 				fileUploads.map((file) => file.url);
 
+			// GET THE UPLOADED FILE ERRORS IF ANY	
 			const uploadErrors = fileUploads.filter(
 				(file) => file.status === "error",
 			);
 
+			// IF THERE ARE ERRORS IN UPLOADING FILES, SHOW THEM IN A TOAST MESSAGE AND RETURN
 			if (uploadErrors.length > 0) {
 				const errorMessages = uploadErrors
 					.map((error) => error.message)
@@ -103,6 +102,7 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 				return;
 			}
 
+			// CREATE THE CLEARANCE
 			const result = await createClearance({
 				...data,
 				arrival_date: data.arrival_date.toISOString(),
@@ -111,6 +111,7 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 				loading_bill: loadingBillResult,
 			});
 
+			// IF THERE IS AN ERROR IN CREATING THE CLEARANCE, SHOW THE MESSAGE IN A TOAST MESSAGE
 			if (result.status === "error") {
 				console.error("ERROR IN CLEARANCE CREATION", result.message);
 				toast({
@@ -118,7 +119,9 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 					description: result.message,
 					variant: "destructive",
 				});
+
 			} else {
+				// IF THERE IS NO ERROR, SHOW A SUCCESS MESSAGE, REDIRECT TO THE CLEARANCES PAGE
 				toast({
 					title: "CREATION OF CLEARANCE",
 					description: result.message,
@@ -149,7 +152,7 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 							render={({ field }) => (
 								<FormItem className="flex flex-col w-1/2">
 									<FormLabel className="text-md font-bold text-green-900">
-										Port
+										Select Port
 									</FormLabel>
 									<Popover>
 										<PopoverTrigger asChild>
@@ -314,8 +317,8 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 					<Button
 						type="submit"
 						className="h-fit rounded-md bg-green-500 py-4 px-8 text-sm font-medium transition-colors hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-50 active:bg-green-600 duration-200 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 text-green-50"
-						aria-disabled={isSubmitting}
-						onClick={() => console.log("Button clicked")}>
+						disabled={isSubmitting}
+						aria-disabled={isSubmitting}>
 						{isSubmitting ? "Creating..." : "Create"}
 					</Button>
 				</section>

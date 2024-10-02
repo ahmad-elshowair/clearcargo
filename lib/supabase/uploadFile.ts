@@ -39,13 +39,11 @@ export const uploadFile = async (file: File, folder: string) => {
 			};
 		}
 		const supabase = createSupabaseBrowserClient();
-		console.log("Supabase client created successfully");
 
 		const fileEXT = file.name.split(".").pop();
 		const fileName = `${folder}/${uuidv4()}.${fileEXT}`;
 
-		console.log("Attempting to upload file:", fileName);
-		const { data: uploadData, error } = await supabase.storage
+		const { error } = await supabase.storage
 			.from("ClearCargo")
 			.upload(fileName, file, { cacheControl: "3600", upsert: false });
 
@@ -57,8 +55,6 @@ export const uploadFile = async (file: File, folder: string) => {
 				url: null,
 			};
 		}
-
-		console.log("data of uploading file: ", uploadData);
 
 		const { data: publicUrlData } = supabase.storage
 			.from("ClearCargo")

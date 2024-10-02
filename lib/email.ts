@@ -1,3 +1,4 @@
+import { fetchPortById } from "@/actions/port";
 import configs from "@/configs/config";
 import { TClearance } from "@/types/clearance";
 import nodemailer from "nodemailer";
@@ -6,8 +7,15 @@ export const sendEmailNotification = async (
 	clearance: TClearance,
 ) => {
 	try {
-		// CREATE A TRANSPORTER OBJECT USING GMAIL SMTP SERVER.
+		// FETCH THE PORT.
+		const port = await fetchPortById(clearance.port_id);
+		if (!port) {
+			console.error("PORT NOT FOUND");
+		}
 
+		const portName = port.data?.port_name;
+
+		// CREATE A TRANSPORTER OBJECT USING GMAIL SMTP SERVER.
 		const transporter = nodemailer.createTransport({
 			host: configs.smtpHost,
 			port: configs.smtpPort,
@@ -25,16 +33,16 @@ export const sendEmailNotification = async (
 			subject: " New Clearance Raised",
 			text: "A new clearance has been raised by a customer. Please login to the admin panel to view the details.",
 			html: `<h3> a new clearance has been raised by a customer. Please login to the admin panel to view the details.</h3>
-                 <p>Clearance ID: ${clearance.clearance_id}</p>`,
+			<P>the new clearance is arrived at ${portName}</P>`,
 		};
 
 		// SEND THE EMAIL MESSAGE.
 
 		const info = await transporter.sendMail(mailOptions);
 
-        return {
+		return {
 			status: "success",
-            message: "Email sent successfully",
+			message: "Email sent successfully",
 			info,
 		};
 	} catch (error) {
