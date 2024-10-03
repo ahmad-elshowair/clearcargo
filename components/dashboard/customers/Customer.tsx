@@ -1,19 +1,9 @@
+import DeleteModal from "@/components/DeleteModal";
+import { TUserTable } from "@/types/user";
 import Image from "next/image";
-import { FaPencil, FaTrashCan } from "react-icons/fa6";
+import { FaPencil } from "react-icons/fa6";
 
-const Customer = ({
-	first_name,
-	surname,
-	created_at,
-	type,
-	email,
-}: {
-	first_name: string;
-	surname: string;
-	type: string;
-	created_at: string;
-	email: string;
-}) => {
+const Customer = ({ customer }: { customer: TUserTable }) => {
 	return (
 		<section className="mb-2 w-full rounded-md bg-white p-4">
 			<section className="flex items-center justify-between border-b pb-4">
@@ -28,23 +18,21 @@ const Customer = ({
 							className="rounded-full mr-2"
 							alt="profile picture"
 						/>
-						<h2 className="text-lg font-bold">{`${first_name} ${surname}`}</h2>
+						<h2 className="text-lg font-bold">{`${customer.first_name} ${customer.surname}`}</h2>
 					</div>
-					<span>{email}</span>
+					<span>{customer.email}</span>
 				</div>
-				<span>{created_at.toString().slice(0, 10)}</span>
+				<span>{customer.created_at.toString().slice(0, 10)}</span>
 			</section>
 			<section className="flex w-full items-center justify-between pt-4">
 				<div>
-					<p className="text-xl font-medium">{type}</p>
+					<p className="text-xl font-medium">{customer.user_type}</p>
 				</div>
 				<div className="flex justify-end gap-2">
 					<button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
 						<FaPencil />
 					</button>
-					<button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-						<FaTrashCan />
-					</button>
+					<DeleteModal id={customer.id} label="Customer" />
 				</div>
 			</section>
 		</section>

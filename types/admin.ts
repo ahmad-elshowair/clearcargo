@@ -8,3 +8,10 @@ export type TAdmin = {
 		mobile_number: string;
 	};
 };
+
+
+export type TAdminResult ={
+	status: "success" | "error";
+	message: string;
+	data?: TAdmin;
+} 

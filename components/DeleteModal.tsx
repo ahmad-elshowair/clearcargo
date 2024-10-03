@@ -1,4 +1,5 @@
 "use client";
+import { deleteCustomer } from "@/actions/admin";
 import { deleteClearance } from "@/actions/clearance";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +24,7 @@ const DeleteModal = ({
 }: {
 	label: string;
 	id: string;
-	link: string;
+	link?: string;
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isDeleting, startTransition] = useTransition();
@@ -51,13 +52,42 @@ const DeleteModal = ({
 					console.error("ERROR DELETING CLEARANCE", deleteResult.message);
 					toast({
 						title: "Deleting Clearance",
-						description: deleteResult.message,
-						variant: "destructive",
+						description: (
+							<div className="flex justify-center items-center bg-red-500 text-red-50 p-4 rounded-md w-[350px]">
+								<p className="text-md font-bold">{deleteResult.message}</p>
+							</div>
+						),
 						duration: 3000,
 					});
 				} else {
 					toast({
 						title: "Deleting Clearance",
+						description: (
+							<div className="flex justify-center items-center bg-green-500 text-green-50 p-4 rounded-md w-[350px]">
+								<p className="text-md font-bold">{deleteResult.message}</p>
+							</div>
+						),
+						duration: 3000,
+					});
+					setIsOpen(false);
+				}
+			}
+			if (pathname === "/dashboard/customers") {
+				const deleteResult = await deleteCustomer(id);
+				if (deleteResult.status === "error") {
+					console.error("ERROR DELETING CUSTOMER", deleteResult.message);
+					toast({
+						title: "Deleting Customer",
+						description: (
+							<div className="flex justify-center items-center bg-red-500 text-red-50 p-4 rounded-md w-[350px]">
+								<p className="text-md font-bold">{deleteResult.message}</p>
+							</div>
+						),
+						duration: 3000,
+					});
+				} else {
+					toast({
+						title: "Deleting Customer",
 						description: (
 							<div className="flex justify-center items-center bg-green-500 text-green-50 p-4 rounded-md w-[350px]">
 								<p className="text-md font-bold">{deleteResult.message}</p>

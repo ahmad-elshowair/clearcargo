@@ -1,8 +1,9 @@
 import Customer from "@/components/dashboard/customers/Customer";
+import DeleteModal from "@/components/DeleteModal";
 import { Button } from "@/components/ui/button";
 import { TUserTable } from "@/types/user";
 import Image from "next/image";
-import { FaPencil, FaTrashCan } from "react-icons/fa6";
+import { FaPencil } from "react-icons/fa6";
 
 const CustomersList = ({ users }: { users: TUserTable[] | null }) => {
 	return (
@@ -14,11 +15,7 @@ const CustomersList = ({ users }: { users: TUserTable[] | null }) => {
 							users.map((user) => (
 								<Customer
 									key={user.id}
-									type={user.user_type}
-									first_name={user.first_name}
-									surname={user.surname}
-									created_at={user.created_at}
-									email={user.email}
+									customer={user}
 								/>
 							))
 						) : (
@@ -83,9 +80,7 @@ const CustomersList = ({ users }: { users: TUserTable[] | null }) => {
 												<Button className="bg-green-400 hover:bg-green-500">
 													<FaPencil />
 												</Button>
-												<Button className="bg-red-400 hover:bg-red-500">
-													<FaTrashCan />
-												</Button>
+												<DeleteModal label="Customer" id={user.id} />
 											</div>
 										</td>
 									</tr>

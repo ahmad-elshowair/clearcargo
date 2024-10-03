@@ -2,13 +2,13 @@
 import { fetchCustomerByEmail } from "@/actions/customer";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { TAdmin } from "@/types/admin";
-import { AuthResult } from "@/types/auth";
+import { TAdminResult } from "@/types/admin";
 import { revalidatePath } from "next/cache";
 
+// CREATE CUSTOMER
 export const createCustomer = async (
 	formData: FormData,
-): Promise<AuthResult> => {
+): Promise<TAdminResult> => {
 	const supabase = await createSupabaseServerClient();
 	const adminSupabase = createSupabaseAdminClient();
 
@@ -74,11 +74,8 @@ export const createCustomer = async (
 	}
 };
 
-export const fetchAllAdmins = async (): Promise<{
-	status: "success" | "error";
-	data?: TAdmin[];
-	message: string;
-}> => {
+// FETCH ALL ADMINS
+export const fetchAllAdmins = async (): Promise<TAdminResult> => {
 	try {
 		const supabase = createSupabaseAdminClient();
 		const { data: admins, error } = await supabase.rpc("fetch_admin_users");
@@ -94,11 +91,37 @@ export const fetchAllAdmins = async (): Promise<{
 
 		return {
 			status: "success",
-			data: admins as TAdmin[],
+			data: admins,
 			message: "FETCHED ALL ADMINS SUCCESSFULLY !",
 		};
 	} catch (error) {
 		console.error("Error in fetchAllAdmins:", error);
+		return {
+			status: "error",
+			message: `An unexpected error occurred: ${error} `,
+		};
+	}
+};
+
+// DELETE CUSTOMER
+export const deleteCustomer = async (id: string): Promise<TAdminResult> => {
+	try {
+		const supabase = createSupabaseAdminClient();
+		const { error } = await supabase.auth.admin.deleteUser(id);
+		if (error) {
+			console.error("Error deleting customer:", error);
+			return {
+				status: "error",
+				message: error.message,
+			};
+		}
+		revalidatePath("/dashboard/customers");
+		return {
+			status: "success",
+			message: "CUSTOMER DELETED SUCCESSFULLY !",
+		};
+	} catch (error) {
+		console.error("Error in deleteCustomer:", error);
 		return {
 			status: "error",
 			message: `An unexpected error occurred: ${error} `,
