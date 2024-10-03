@@ -1,19 +1,22 @@
 "use client";
+import DeleteModal from "@/components/DeleteModal";
 import { Button } from "@/components/ui/button";
 import { TClearanceTable } from "@/types/clearance";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaPencil, FaTrashCan } from "react-icons/fa6";
+import { FaPencil } from "react-icons/fa6";
 import { MdOutlinePaid, MdPaid } from "react-icons/md";
 import Clearance from "./Clearance";
 
 const ClearancesList = ({
 	clearances,
 }: {
-	clearances: TClearanceTable[] | null;
+	clearances: TClearanceTable[] | undefined;
 }) => {
 	const pathname = usePathname();
+	console.log("the pathname is ", pathname);
+
 	return (
 		<section className="mt-6 flow-root">
 			<div className="inline-block min-w-full align-middle">
@@ -21,19 +24,7 @@ const ClearancesList = ({
 					<div className="lg:hidden">
 						{clearances && clearances?.length > 0 ? (
 							clearances.map((clearance: TClearanceTable, index) => (
-								<Clearance
-									key={index}
-									id={clearance.clearance_id}
-									is_vat_paid={clearance.is_vat_paid}
-									first_name={clearance.first_name}
-									surname={clearance.surname}
-									arrival_date={clearance.arrival_date}
-									email={clearance.email}
-									invoice={clearance.invoice}
-									vat_receipt={clearance.vat_receipt}
-									loading_bill={clearance.loading_bill}
-									port_name={clearance.port_name}
-								/>
+								<Clearance key={index} clearance={clearance} link={pathname} />
 							))
 						) : (
 							<p className="text-4xl text-center text-red-100 border rounded-md p-4 bg-red-200">
@@ -166,15 +157,17 @@ const ClearancesList = ({
 											<div className="flex items-center gap-3">
 												{pathname === "/dashboard/all-clearances" && (
 													<Link
-														href={`/dashboard/${clearance.clearance_id}/edit`}>
+														href={`/dashboard/clearances/${clearance.clearance_id}/edit`}>
 														<Button className="bg-green-500 hover:bg-green-700 text-white font-bold">
 															<FaPencil />
 														</Button>
 													</Link>
 												)}
-												<Button className="bg-red-400 hover:bg-red-500">
-													<FaTrashCan />
-												</Button>
+												<DeleteModal
+													id={clearance.clearance_id}
+													label="clearance"
+													link={pathname}
+												/>
 											</div>
 										</td>
 									</tr>

@@ -24,10 +24,15 @@ export type TClearance = {
 	vat_receipt: string | null;
 };
 
-export type TClearanceResult = {
+export type TClearanceResult={
 	status: "error" | "success";
 	message: string;
-	data?: TClearanceTable | TClearance;
+	data?: TClearance;
+}
+export type TFilteredClearanceResult = {
+	status: "error" | "success";
+	message: string;
+	data?: TClearanceTable[];
 	currentPage?: number;
 	totalPages?: number;
 };

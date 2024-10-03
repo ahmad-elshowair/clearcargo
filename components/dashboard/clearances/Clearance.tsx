@@ -1,34 +1,20 @@
 "use client";
+import DeleteModal from "@/components/DeleteModal";
 import { Button } from "@/components/ui/button";
+import { TClearanceTable } from "@/types/clearance";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaPencil, FaTrashCan } from "react-icons/fa6";
+import { FaPencil } from "react-icons/fa6";
 import { MdOutlinePaid, MdPaid } from "react-icons/md";
 
 const Clearance = ({
-	id,
-	first_name,
-	surname,
-	is_vat_paid,
-	arrival_date,
-	invoice,
-	vat_receipt,
-	loading_bill,
-	email,
-	port_name,
+	clearance,
+	link,
 }: {
-	id: string;
-	first_name: string;
-	surname: string;
-	is_vat_paid: boolean;
-	arrival_date: string;
-	invoice: string;
-	vat_receipt: string;
-	loading_bill: string;
-	email: string;
-	port_name: string;
+	clearance: TClearanceTable;
+	link: string;
 }) => {
 	const pathname = usePathname();
 	return (
@@ -46,8 +32,8 @@ const Clearance = ({
 							alt="profile picture"
 						/>
 						<div className="flex flex-col">
-							<h2 className="text-lg font-bold">{`${first_name} ${surname}`}</h2>
-							<span className="text-xs text-gray-500">{email}</span>
+							<h2 className="text-lg font-bold">{`${clearance.first_name} ${clearance.surname}`}</h2>
+							<span className="text-xs text-gray-500">{clearance.email}</span>
 						</div>
 					</div>
 				)}
@@ -58,7 +44,7 @@ const Clearance = ({
 					)}>
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">VAT Paid</span>
-						{is_vat_paid ? (
+						{clearance.is_vat_paid ? (
 							<div className="flex gap-2 text-green-500">
 								<span>YES</span>
 								<MdPaid className="h-6 w-6" />
@@ -73,9 +59,9 @@ const Clearance = ({
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">VAT Receipt</span>
 
-						{vat_receipt ? (
+						{clearance.vat_receipt ? (
 							<Link
-								href={vat_receipt}
+								href={clearance.vat_receipt}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="text-blue-500 hover:text-blue-700">
@@ -87,9 +73,9 @@ const Clearance = ({
 					</div>
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">Loading Bill</span>
-						{loading_bill ? (
+						{clearance.loading_bill ? (
 							<Link
-								href={loading_bill}
+								href={clearance.loading_bill}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="text-blue-500 hover:text-blue-700">
@@ -105,13 +91,13 @@ const Clearance = ({
 				<div className="w-2/3 flex justify-between items-center">
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">Arrival Port</span>
-						<p className="text-xl font-medium">{port_name}</p>
+						<p className="text-xl font-medium">{clearance.port_name}</p>
 					</div>
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">Invoice</span>
-						{invoice ? (
+						{clearance.invoice ? (
 							<Link
-								href={invoice}
+								href={clearance.invoice}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="text-blue-500 hover:text-blue-700">
@@ -124,21 +110,23 @@ const Clearance = ({
 
 					<div className="flex flex-col items-center">
 						<span className="text-xs text-gray-500">Arrival Date</span>
-						<span>{arrival_date.toString().slice(0, 10)}</span>
+						<span>{clearance.arrival_date.toString().slice(0, 10)}</span>
 					</div>
 				</div>
 
 				<div className="flex justify-end gap-2 w-1/3">
 					{pathname === "/dashboard/all-clearances" && (
-						<Link href={`/dashboard/${id}/edit`}>
+						<Link href={`/dashboard/${clearance.clearance_id}/edit`}>
 							<Button className="bg-green-500 hover:bg-green-700 text-white font-bold">
 								<FaPencil />
 							</Button>
 						</Link>
 					)}
-					<Button className="bg-red-500 hover:bg-red-700 text-white font-bold">
-						<FaTrashCan />
-					</Button>
+					<DeleteModal
+						id={clearance.clearance_id}
+						label="Clearance"
+						link={link}
+					/>
 				</div>
 			</section>
 		</section>

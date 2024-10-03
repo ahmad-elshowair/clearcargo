@@ -7,7 +7,9 @@ import {
 	TClearance,
 	TClearanceResult,
 	TClearanceTable,
+	TFilteredClearanceResult,
 } from "@/types/clearance";
+import { revalidatePath } from "next/cache";
 import { fetchAllAdmins } from "./admin";
 
 const CLEARANCES_PER_PAGE = 10;
@@ -21,7 +23,7 @@ export const fetchUserFilteredClearances = async (
 	limit: number = CLEARANCES_PER_PAGE,
 	sortColumn: string = "created_at",
 	sortDirection: "ASC" | "DESC" = "DESC",
-): Promise<TClearanceResult> => {
+): Promise<TFilteredClearanceResult> => {
 	try {
 		const supabase = await createSupabaseServerClient();
 
@@ -44,14 +46,14 @@ export const fetchUserFilteredClearances = async (
 			};
 		}
 
-		const totalCount =
-			(data as TClearanceTable[]).length > 0 ? Number(data[0].total_count) : 0;
+		const clearances = data as TClearanceTable[];
+		const totalCount = clearances.length > 0 ? Number(data[0].total_count) : 0;
 		const totalPages = Math.ceil(totalCount / limit);
 
 		return {
 			status: "success",
 			message: "Clearances fetched successfully",
-			data: data,
+			data: clearances,
 			currentPage: page,
 			totalPages: totalPages,
 		};
@@ -71,7 +73,7 @@ export const fetchFilteredClearances = async (
 	limit: number = CLEARANCES_PER_PAGE,
 	sortColumn: string = "created_at",
 	sortDirection: "ASC" | "DESC" = "DESC",
-): Promise<TClearanceResult> => {
+): Promise<TFilteredClearanceResult> => {
 	try {
 		const { data, error } = await supabaseAdmin.rpc(
 			"fetch_filtered_clearances",
@@ -91,15 +93,14 @@ export const fetchFilteredClearances = async (
 				message: error.message,
 			};
 		}
-
-		const totalCount =
-			(data as TClearanceTable[]).length > 0 ? Number(data[0].total_count) : 0;
+		const clearances = data as TClearanceTable[];
+		const totalCount = clearances.length > 0 ? Number(data[0].total_count) : 0;
 		const totalPages = Math.ceil(totalCount / limit);
 
 		return {
 			status: "success",
 			message: "Clearances fetched successfully",
-			data: data,
+			data: clearances,
 			currentPage: page,
 			totalPages: totalPages,
 		};
@@ -149,8 +150,6 @@ export const createClearance = async (clearance: TClearance) => {
 				data: null,
 			};
 		}
-
-		console.log("clearance created:", clearanceData);
 
 		// FETCH ALL ADMINS' EMAILS.
 		const adminResult = await fetchAllAdmins();
@@ -230,14 +229,22 @@ export const fetchClearanceById = async (
 	}
 };
 
-// DELETE A CLEARANCE
+// DELETE A CLEARANCE BY ID
+
 export const deleteClearance = async (
 	id: string,
+	link?: string,
 ): Promise<TClearanceResult> => {
 	try {
+		if (!id) {
+			return {
+				status: "error",
+				message: "CLEARANCE ID NOT PROVIDED",
+			};
+		}
 		const supabase = await createSupabaseServerClient();
 
-		// FETCH THE DELETED CLEARANCE
+		// FETCH THE CLEARANCE TO BE DELETED
 		const clearanceResult = await fetchClearanceById(id);
 
 		if (clearanceResult.status === "error") {
@@ -249,7 +256,7 @@ export const deleteClearance = async (
 		}
 		const clearance = clearanceResult.data;
 
-		// GET THE USER THE LOGGED IN USER
+		// GET THE LOGGED IN USER
 		const {
 			data: { user },
 			error: userError,
@@ -264,37 +271,46 @@ export const deleteClearance = async (
 			};
 		}
 
-		const user_type = user?.user_metadata.type as "admin" | "customer";
+		if (!user) {
+			return {
+				status: "error",
+				message: "USER NOT AUTHENTICATED",
+			};
+		}
 
-		const user_id = user?.id;
+		const user_type = user.user_metadata.type as "admin" | "customer";
+		const user_id = user.id;
 
-		// CHECK IF THE USER IS AN ADMIN OR A CUSTOMER
-		if (user_type === "customer" && clearance?.created_by !== user_id) {
+		// CHECK IF THE USER IS AN ADMIN OR THE OWNER OF THE CLEARANCE
+		if (user_type === "admin" || clearance?.created_by === user_id) {
+			// DELETE THE CLEARANCE IN SUPABASE
+			const { error: clearanceError } = await supabase
+				.from("clearances")
+				.delete()
+				.match({ id });
+
+			if (clearanceError) {
+				console.error("ERROR DELETING CLEARANCE", clearanceError.message);
+				return {
+					status: "error",
+					message: clearanceError.message,
+				};
+			}
+
+			if (link) {
+				revalidatePath(`${link}`);
+			}
+			return {
+				status: "success",
+				message: "CLEARANCE DELETED SUCCESSFULLY",
+			};
+		} else {
 			console.error("ERROR: USER IS NOT AUTHORIZED TO DELETE THIS CLEARANCE");
 			return {
 				status: "error",
 				message: "USER IS NOT AUTHORIZED TO DELETE THIS CLEARANCE",
 			};
 		}
-
-		// DELETE THE CLEARANCE IN SUPABASE
-		const { error: clearanceError } = await supabase
-			.from("clearances")
-			.delete()
-			.match({ id });
-
-		if (clearanceError) {
-			console.error("ERROR DELETING CLEARANCE", clearanceError.message);
-			return {
-				status: "error",
-				message: clearanceError.message,
-			};
-		}
-
-		return {
-			status: "success",
-			message: "CLEARANCE DELETED SUCCESSFULLY",
-		};
 	} catch (error) {
 		console.error("ERROR DELETING CLEARANCE", error);
 		return {
