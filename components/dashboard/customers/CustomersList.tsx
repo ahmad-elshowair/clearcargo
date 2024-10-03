@@ -3,6 +3,7 @@ import DeleteModal from "@/components/DeleteModal";
 import { Button } from "@/components/ui/button";
 import { TUserTable } from "@/types/user";
 import Image from "next/image";
+import Link from "next/link";
 import { FaPencil } from "react-icons/fa6";
 
 const CustomersList = ({ users }: { users: TUserTable[] | null }) => {
@@ -12,12 +13,7 @@ const CustomersList = ({ users }: { users: TUserTable[] | null }) => {
 				<div className="rounded-lg bg-green-100 p-2 md:mt-0">
 					<div className="lg:hidden">
 						{users ? (
-							users.map((user) => (
-								<Customer
-									key={user.id}
-									customer={user}
-								/>
-							))
+							users.map((user) => <Customer key={user.id} customer={user} />)
 						) : (
 							<p className="text-4xl text-red-100 border rounded-md p-4 bg-red-200">
 								No Customers Found
@@ -77,9 +73,11 @@ const CustomersList = ({ users }: { users: TUserTable[] | null }) => {
 										</td>
 										<td className="whitespace-nowrap px-3">
 											<div className="flex items-center gap-3">
-												<Button className="bg-green-400 hover:bg-green-500">
-													<FaPencil />
-												</Button>
+												<Link href={`/dashboard/customers/${user.id}/edit`}>
+													<Button className="bg-transparent text-green-600 hover:text-green-50 hover:bg-green-600 px-2 border border-green-600 h-fit">
+														<FaPencil className="w-5" />
+													</Button>
+												</Link>
 												<DeleteModal label="Customer" id={user.id} />
 											</div>
 										</td>

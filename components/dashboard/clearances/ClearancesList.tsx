@@ -158,8 +158,8 @@ const ClearancesList = ({
 												{pathname === "/dashboard/all-clearances" && (
 													<Link
 														href={`/dashboard/clearances/${clearance.clearance_id}/edit`}>
-														<Button className="bg-green-500 hover:bg-green-700 text-white font-bold">
-															<FaPencil />
+														<Button className="bg-transparent text-green-600 hover:text-green-50 hover:bg-green-600 px-2 border border-green-600 h-fit">
+															<FaPencil className="w-5" />
 														</Button>
 													</Link>
 												)}
