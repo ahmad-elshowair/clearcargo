@@ -9,9 +9,8 @@ export type TAdmin = {
 	};
 };
 
-
-export type TAdminResult ={
+export type TAdminResult = {
 	status: "success" | "error";
 	message: string;
-	data?: TAdmin;
-} 
+	data?: TAdmin[];
+};

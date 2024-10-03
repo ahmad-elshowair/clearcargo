@@ -16,19 +16,19 @@ export type TClearanceTable = {
 export type TClearance = {
 	clearance_id?: string;
 	port_id: string;
-	created_by: string;
+	created_by?: string;
 	is_vat_paid: boolean;
-	arrival_date: string;
-	invoice: string | null;
-	loading_bill: string | null;
-	vat_receipt: string | null;
+	arrival_date: Date | string;
+	invoice?: string | null;
+	loading_bill?: string | null;
+	vat_receipt?: string | null;
 };
 
-export type TClearanceResult={
+export type TClearanceResult = {
 	status: "error" | "success";
 	message: string;
 	data?: TClearance;
-}
+};
 export type TFilteredClearanceResult = {
 	status: "error" | "success";
 	message: string;

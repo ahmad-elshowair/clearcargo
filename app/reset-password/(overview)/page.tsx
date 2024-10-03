@@ -1,5 +1,7 @@
+import ResetPasswordLoading from "@/app/reset-password/(overview)/loading";
 import { Logo } from "@/components/Logo";
 import ResetPasswordForm from "@/components/ResetPasswordForm";
+import { Suspense } from "react";
 
 const ResetPasswordPage = () => {
 	return (
@@ -13,7 +15,9 @@ const ResetPasswordPage = () => {
 						<h1 className="text-3xl font-bold text-gray-300/35 mb-10 text-center">
 							Reset Password
 						</h1>
-						<ResetPasswordForm />
+						<Suspense fallback={<ResetPasswordLoading />}>
+							<ResetPasswordForm />
+						</Suspense>
 					</section>
 				</section>
 			</section>

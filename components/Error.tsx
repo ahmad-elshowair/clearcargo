@@ -1,8 +1,7 @@
-"use client"; // Ensure this component runs on the client side
-
+"use client";
 import { useSearchParams } from "next/navigation";
 
-export default function ErrorPage() {
+const Error = () => {
 	// USE NEXT.JS HOOK TO GET SEARCH PARAMS FROM THE URL
 	const searchParams = useSearchParams();
 	const errorMessage =
@@ -18,4 +17,6 @@ export default function ErrorPage() {
 			</div>
 		</div>
 	);
-}
+};
+
+export default Error;
