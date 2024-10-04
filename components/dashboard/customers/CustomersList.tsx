@@ -53,7 +53,7 @@ const CustomersList = ({ users }: { users: TUserTable[] | null }) => {
 										<td className="py-3 pl-6 pr-3 whitespace-nowrap">
 											<Image
 												src={
-													"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClreaCargo/images/29-8-2024-367-avatar.png"
+													"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClearCargo/images/avatar.png"
 												}
 												height={40}
 												width={40}

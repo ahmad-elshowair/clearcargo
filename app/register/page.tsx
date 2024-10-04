@@ -30,7 +30,7 @@ const RegisterPage = async () => {
 					<section className="flex flex-col items-center justify-center w-2/5 h-full">
 						<Image
 							src={
-								"https://mcqcttzcvnupvxeptsyf.supabase.co/storage/v1/object/public/ClreaCargo/images/ClearCargo-logo.png"
+								"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClearCargo/images/ClearCargo-logo.png"
 							}
 							height={500}
 							width={400}

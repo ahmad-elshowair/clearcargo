@@ -25,7 +25,7 @@ const LoginPage = async () => {
 					<section className="flex flex-col items-center justify-center w-3/5 h-full">
 						<Image
 							src={
-								"https://mcqcttzcvnupvxeptsyf.supabase.co/storage/v1/object/public/ClreaCargo/images/ClearCargo-logo.png"
+								"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClearCargo/images/ClearCargo-logo.png"
 							}
 							height={500}
 							width={400}
