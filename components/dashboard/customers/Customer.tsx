@@ -1,6 +1,8 @@
 import DeleteModal from "@/components/DeleteModal";
+import { Button } from "@/components/ui/button";
 import { TUserTable } from "@/types/user";
 import Image from "next/image";
+import Link from "next/link";
 import { FaPencil } from "react-icons/fa6";
 
 const Customer = ({ customer }: { customer: TUserTable }) => {
@@ -22,16 +24,20 @@ const Customer = ({ customer }: { customer: TUserTable }) => {
 					</div>
 					<span>{customer.email}</span>
 				</div>
-				<span>{customer.created_at.toString().slice(0, 10)}</span>
+				<span className="text-sm">
+					{customer.created_at.toString().slice(0, 10)}
+				</span>
 			</section>
 			<section className="flex w-full items-center justify-between pt-4">
 				<div>
 					<p className="text-xl font-medium">{customer.user_type}</p>
 				</div>
 				<div className="flex justify-end gap-2">
-					<button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-						<FaPencil />
-					</button>
+					<Link href={`/dashboard/customers/${customer.id}/edit`}>
+						<Button className="bg-transparent text-green-600 hover:text-green-50 hover:bg-green-600 px-2 border border-green-600 h-fit">
+							<FaPencil className="w-5" />
+						</Button>
+					</Link>
 					<DeleteModal id={customer.id} label="Customer" />
 				</div>
 			</section>

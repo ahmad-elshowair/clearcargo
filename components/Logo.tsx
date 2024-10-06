@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const Logo = ({ fontSize }: { fontSize?: string }) => {
 	return (
-		<div className="flex lg:flex-col leading-none lg:items-start items-center">
+		<div className="flex md:flex-col leading-none lg:items-start items-center">
 			<Image
 				src={
 					"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClearCargo/images/ClearCargo-logo.png"

@@ -20,7 +20,7 @@ const page = async ({
 	return (
 		<section className="flex lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full flex-col gap-3">
 			<h1 className="md:mb-20 md:mt-10 text-3xl font-bold">Clearances</h1>
-			<section className="flex items-center justify-between gap-2">
+			<section className="flex items-center justify-between gap-2 w-full">
 				<Search placeholder="Find a Clearance" />
 				<Link
 					href={"/dashboard/clearances/create"}

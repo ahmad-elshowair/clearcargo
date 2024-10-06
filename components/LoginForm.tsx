@@ -121,7 +121,7 @@ export const LoginForm = () => {
 						disabled={isLoading}>
 						{isLoading ? "Loading..." : "Login"}
 					</Button>
-					<div className="flex justify-center gap-20 text-sm">
+					<div className="flex md:flex-row flex-col justify-center gap-4 lg:gap-20 text-sm">
 						<Link
 							href={"/forgot-password"}
 							className="text-slate-500 hover:text-slate-600 hover:underline">

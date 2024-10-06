@@ -77,14 +77,14 @@ export default function RegisterForm() {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-				<section className="mb-12">
-					<div className="flex items-center flex-col md:flex-row justify-center gap-8 mb-4">
+				<section className="mb-8 md:mb-12">
+					<div className="flex items-center flex-col md:flex-row justify-center gap-3 lg:gap-8 mb-2 md:mb-4">
 						{/* First Name */}
 						<FormField
 							control={form.control}
 							name="first_name"
 							render={({ field }) => (
-								<FormItem className="w-1/2">
+								<FormItem className="w-full lg:w-1/2">
 									<FormLabel className="text-md font-bold text-white">
 										First Name
 									</FormLabel>
@@ -104,7 +104,7 @@ export default function RegisterForm() {
 							control={form.control}
 							name="surname"
 							render={({ field }) => (
-								<FormItem className="w-1/2">
+								<FormItem className="w-full lg:w-1/2">
 									<FormLabel className="text-md font-bold text-white">
 										Surname
 									</FormLabel>
@@ -121,13 +121,13 @@ export default function RegisterForm() {
 						/>
 					</div>
 
-					<div className="flex items-center flex-col md:flex-row justify-center gap-8 mb-4">
+					<div className="flex items-center flex-col md:flex-row justify-center gap-3 lg:gap-8 mb-2 md:mb-4">
 						{/* Email */}
 						<FormField
 							control={form.control}
 							name="email"
 							render={({ field }) => (
-								<FormItem className="w-1/2">
+								<FormItem className="w-full lg:w-1/2">
 									<FormLabel className="text-md font-bold text-white">
 										Email
 									</FormLabel>
@@ -148,7 +148,7 @@ export default function RegisterForm() {
 							control={form.control}
 							name="password"
 							render={({ field }) => (
-								<FormItem className="w-1/2">
+								<FormItem className="w-full lg:w-1/2">
 									<FormLabel className="text-md font-bold text-white">
 										Password
 									</FormLabel>
@@ -166,13 +166,13 @@ export default function RegisterForm() {
 						/>
 					</div>
 
-					<div className="flex items-center flex-col md:flex-row justify-center gap-8 mb-4">
+					<div className="flex items-center flex-col md:flex-row justify-center gap-3 lg:gap-8 mb-2 md:mb-4">
 						{/* Date of Birth */}
 						<FormField
 							control={form.control}
 							name="date_of_birth"
 							render={({ field }) => (
-								<FormItem className="w-1/2">
+								<FormItem className="w-full lg:w-1/2">
 									<FormLabel className="text-md font-bold text-white">
 										Date of Birth
 									</FormLabel>
@@ -188,7 +188,7 @@ export default function RegisterForm() {
 							control={form.control}
 							name="mobile_number"
 							render={({ field }) => (
-								<FormItem className="w-1/2">
+								<FormItem className="w-full lg:w-1/2">
 									<FormLabel className="text-md font-bold text-white">
 										Mobile Number
 									</FormLabel>
@@ -206,10 +206,10 @@ export default function RegisterForm() {
 					</div>
 				</section>
 
-				<section className="flex items-center gap-10 flex-col md:justify-between">
+				<section className="flex items-center gap-5 ld:gap-10 flex-col md:justify-between">
 					<Button
 						type="submit"
-						className="font-bold w-5/12 text-white bg-gray-500 hover:bg-gray-700"
+						className="font-bold w-full lg:w-5/12 text-white bg-gray-500 hover:bg-gray-700"
 						disabled={loading}>
 						{loading ? "Registering..." : "Register"}
 					</Button>

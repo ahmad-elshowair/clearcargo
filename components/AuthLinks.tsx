@@ -39,9 +39,9 @@ const AuthLinks = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 			{isLoggedIn ? (
 				<button
 					onClick={handleLogout}
-					className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-semibold lg:flex-none md:justify-start md:p-2 md:px-3 shadow hover:bg-green-500 text-[#2A3940] bg-emerald-100 hover:text-green-50 duration-200 ease-in-out">
+					className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-semibold lg:flex-none lg:justify-start md:p-2 md:px-3 shadow hover:bg-green-500 text-[#2A3940] bg-emerald-100 hover:text-green-50 duration-200 ease-in-out">
 					<FaArrowRightFromBracket className="w-6" />
-					<span className="sm:hidden lg:block">logout</span>
+					<span className="hidden sm:block">logout</span>
 				</button>
 			) : (
 				<>
@@ -54,7 +54,7 @@ const AuthLinks = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 							},
 						)}>
 						<FaArrowRightToBracket className="w-6 font-bold" />
-						<span className="sm:hidden lg:block">Login</span>
+						<span className="hidden sm:block">Login</span>
 					</Link>
 					<Link
 						href={"/register"}
