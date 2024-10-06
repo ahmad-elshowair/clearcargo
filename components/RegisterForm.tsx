@@ -84,15 +84,15 @@ export default function RegisterForm() {
 							control={form.control}
 							name="first_name"
 							render={({ field }) => (
-								<FormItem className="w-full lg:w-1/2">
-									<FormLabel className="text-md font-bold text-white">
+								<FormItem className="w-full md:w-1/2">
+									<FormLabel className="text-xs md:text-md md:font-bold text-white">
 										First Name
 									</FormLabel>
 									<FormControl>
 										<Input
-											placeholder="First Name"
+											placeholder="Jack"
 											{...field}
-											className="bg-green-200"
+											className="bg-green-200 placeholder:text-xs"
 										/>
 									</FormControl>
 									<FormMessage />
@@ -104,15 +104,15 @@ export default function RegisterForm() {
 							control={form.control}
 							name="surname"
 							render={({ field }) => (
-								<FormItem className="w-full lg:w-1/2">
-									<FormLabel className="text-md font-bold text-white">
+								<FormItem className="w-full md:w-1/2">
+									<FormLabel className="text-sm md:text-md md:font-bold text-white">
 										Surname
 									</FormLabel>
 									<FormControl>
 										<Input
-											placeholder="Surname"
+											placeholder="Noah"
 											{...field}
-											className="bg-green-200"
+											className="bg-green-200 placeholder:text-xs placeholder:md:text-sm"
 										/>
 									</FormControl>
 									<FormMessage />
@@ -127,16 +127,16 @@ export default function RegisterForm() {
 							control={form.control}
 							name="email"
 							render={({ field }) => (
-								<FormItem className="w-full lg:w-1/2">
-									<FormLabel className="text-md font-bold text-white">
+								<FormItem className="w-full md:w-1/2">
+									<FormLabel className="text-sm md:text-md md:font-bold text-white">
 										Email
 									</FormLabel>
 									<FormControl>
 										<Input
 											type="email"
-											placeholder="Email"
+											placeholder="example@example.com"
 											{...field}
-											className="bg-green-200"
+											className="bg-green-200 placeholder:text-xs placeholder:md:text-sm"
 										/>
 									</FormControl>
 									<FormMessage />
@@ -148,16 +148,16 @@ export default function RegisterForm() {
 							control={form.control}
 							name="password"
 							render={({ field }) => (
-								<FormItem className="w-full lg:w-1/2">
-									<FormLabel className="text-md font-bold text-white">
+								<FormItem className="w-full md:w-1/2">
+									<FormLabel className="text-sm md:text-md md:font-bold text-white">
 										Password
 									</FormLabel>
 									<FormControl>
 										<Input
 											type="password"
-											placeholder="Password"
+											placeholder="**********"
 											{...field}
-											className="bg-green-200"
+											className="bg-green-200 placeholder:text-xs placeholder:md:text-sm"
 										/>
 									</FormControl>
 									<FormMessage />
@@ -172,8 +172,8 @@ export default function RegisterForm() {
 							control={form.control}
 							name="date_of_birth"
 							render={({ field }) => (
-								<FormItem className="w-full lg:w-1/2">
-									<FormLabel className="text-md font-bold text-white">
+								<FormItem className="w-full md:w-1/2">
+									<FormLabel className="text-sm md:text-md md:font-bold text-white">
 										Date of Birth
 									</FormLabel>
 									<FormControl>
@@ -188,15 +188,15 @@ export default function RegisterForm() {
 							control={form.control}
 							name="mobile_number"
 							render={({ field }) => (
-								<FormItem className="w-full lg:w-1/2">
-									<FormLabel className="text-md font-bold text-white">
+								<FormItem className="w-full md:w-1/2">
+									<FormLabel className="text-sm md:text-md md:font-bold text-white">
 										Mobile Number
 									</FormLabel>
 									<FormControl>
 										<Input
 											placeholder="Mobile Number"
 											{...field}
-											className="bg-green-200"
+											className="bg-green-200 placeholder:text-xs placeholder:md:text-sm"
 										/>
 									</FormControl>
 									<FormMessage />
