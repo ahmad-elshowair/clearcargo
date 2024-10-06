@@ -18,7 +18,7 @@ export default async function Home() {
 	return (
 		<section className="lg:min-h-screen xl:min-h-screen h-screen p-1 sm:p-2 md:p-4 lg:p-6 w-full">
 			<div className="grid gap-6 rounded-lg bg-gray-300/35 shadow h-full justify-items-stretch p-2 sm:p-4 border border-green-400/50">
-				<section className="justify-self-center md:justify-self-start items">
+				<section className="flex justify-self-center md:justify-self-start items-center">
 					<Logo fontSize="text-[45px]" />
 				</section>
 				<section className="w-full flex justify-center items-center">
@@ -54,7 +54,7 @@ export default async function Home() {
 						</article>
 					)}
 				</section>
-				<section className="justify-self-center md:justify-self-end flex gap-4 items-end">
+				<section className=" justify-self-center md:justify-self-end flex gap-4 items-center md:items-end">
 					{session.isLoggedIn ? (
 						<LogoutButton />
 					) : (
