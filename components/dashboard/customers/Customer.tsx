@@ -13,7 +13,7 @@ const Customer = ({ customer }: { customer: TUserTable }) => {
 					<div className="mb-2 flex items-center">
 						<Image
 							src={
-								"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClreaCargo/images/29-8-2024-367-avatar.png"
+								"https://dwxqnygcejwrtodsggza.supabase.co/storage/v1/object/public/ClearCargo/images/avatar.png"
 							}
 							height={28}
 							width={28}
