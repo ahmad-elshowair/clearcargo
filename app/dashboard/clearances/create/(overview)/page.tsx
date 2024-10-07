@@ -19,7 +19,7 @@ const CreateClearancePage = async () => {
 	const { data } = await fetchAllPorts();
 	return (
 		<section className="flex lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-4 w-full flex-col gap-3">
-			<section className="mt-20">
+			<section className="lg:mt-20">
 				<Suspense>
 					<Breadcrumb breadcrumbs={breadcrumbs} />
 				</Suspense>

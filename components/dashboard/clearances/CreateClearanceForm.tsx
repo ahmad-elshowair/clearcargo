@@ -80,7 +80,7 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 			const [invoiceResult, vatReceiptResult, loadingBillResult] =
 				fileUploads.map((file) => file.url);
 
-			// GET THE UPLOADED FILE ERRORS IF ANY	
+			// GET THE UPLOADED FILE ERRORS IF ANY
 			const uploadErrors = fileUploads.filter(
 				(file) => file.status === "error",
 			);
@@ -119,7 +119,6 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 					description: result.message,
 					variant: "destructive",
 				});
-
 			} else {
 				// IF THERE IS NO ERROR, SHOW A SUCCESS MESSAGE, REDIRECT TO THE CLEARANCES PAGE
 				toast({
@@ -142,15 +141,15 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)}>
+			<form onSubmit={form.handleSubmit(onSubmit)} className="pb-10 md:p-0">
 				<section className="bg-green-100 p-4 rounded-lg md:p-6">
 					{/* SELECT PORT  */}
-					<div className="flex justify-between items-center mb-10 gap-4">
+					<div className="flex md:flex-row flex-col justify-between items-center mb-10 gap-4">
 						<FormField
 							control={form.control}
 							name="port_id"
 							render={({ field }) => (
-								<FormItem className="flex flex-col w-1/2">
+								<FormItem className="flex flex-col md:w-1/2 w-full">
 									<FormLabel className="text-md font-bold text-green-900">
 										Select Port
 									</FormLabel>
@@ -215,7 +214,7 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 							control={form.control}
 							name="arrival_date"
 							render={({ field }) => (
-								<FormItem className="w-1/2">
+								<FormItem className="w-full md:w-1/2">
 									<FormLabel className="text-md font-bold text-green-900">
 										Arrival Date
 									</FormLabel>
@@ -237,8 +236,9 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 						/>
 					</div>
 
-					<div className="mb-10 flex gap-4">
+					<div className="mb-10 flex md:flex-row flex-col gap-4">
 						<FileInputField name="invoice" label="Invoice" form={form} />
+
 						<FileInputField
 							name="loading_bill"
 							label="Loading Bill"
@@ -246,12 +246,12 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 						/>
 					</div>
 
-					<section className="flex w-full justify-between items-center mb-10 gap-3">
-						<fieldset className="mb-3 w-1/2">
+					<section className="flex flex-col md:flex-row w-full items-center mb-10 gap-3">
+						<fieldset className="mb-3 md:w-1/2">
 							<legend className="mb-3 block text-md font-bold text-green-900">
 								Is VAT Paid?
 							</legend>
-							<section className="flex flex-col md:flex-row gap-10 items-center ">
+							<section className="flex flex-row gap-10 items-center ">
 								<FormField
 									control={form.control}
 									name="is_vat_paid"
@@ -300,15 +300,17 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 							</section>
 						</fieldset>
 						{isVatPaid && (
-							<FileInputField
-								name="vat_receipt"
-								label="VAT Receipt"
-								form={form}
-							/>
+							<div className="w-full md:w-1/2">
+								<FileInputField
+									name="vat_receipt"
+									label="VAT Receipt"
+									form={form}
+								/>
+							</div>
 						)}
 					</section>
 				</section>
-				<section className="mt-4 flex justify-end gap-4">
+				<section className="mt-4 flex justify-center md:justify-end gap-4">
 					<Link
 						href={"/dashboard/clearances"}
 						className="px-8 text-sm font-medium text-green-600 bg-green-50 hover:bg-green-200 transition-colors duration-200 py-4 rounded-md">
