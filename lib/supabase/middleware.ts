@@ -54,8 +54,8 @@ export async function updateSession(request: NextRequest) {
 			"/forgot-password",
 			"/reset-password",
 		]),
-		PROTECTED: new Set(["/dashboard", "/shipments"]),
-		ADMIN: new Set(["/customers", "/all-shipments"]),
+		PROTECTED: new Set(["/dashboard", "/dashboard/clearances"]),
+		ADMIN: new Set(["/dashboard/customers", "/dashboard/all-clearances"]),
 	};
 
 	// REDIRECTION FUNCTION
