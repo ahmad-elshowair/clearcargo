@@ -15,7 +15,7 @@ export const Logo = ({ fontSize }: { fontSize?: string }) => {
 				className="w-[120px] h-[80px]"
 			/>
 			<h1 className={clsx(fontSize, "font-bold text-neutral-900")}>
-				<Link href="/" className="hidden lg:inline-block">
+				<Link href="/" className="hidden md:inline-block">
 					<span className="text-[#07BE52]">Clear</span>Cargo
 				</Link>
 			</h1>
