@@ -114,14 +114,14 @@ export const LoginForm = () => {
 						/>
 					</div>
 				</section>
-				<section className="flex flex-col gap-10 items-center justify-between">
+				<section className="w-full flex flex-col gap-10 items-center justify-between">
 					<Button
 						type="submit"
-						className="font-bold w-4/12 text-white bg-gray-700 hover:bg-gray-900"
+						className="font-bold w-full lg:w-4/12  text-white bg-gray-700 hover:bg-gray-900"
 						disabled={isLoading}>
 						{isLoading ? "Loading..." : "Login"}
 					</Button>
-					<div className="flex md:flex-row flex-col justify-center gap-4 lg:gap-20 text-sm">
+					<div className="flex sm:flex-row flex-col justify-between lg:justify-center items-center gap-4 lg:gap-20 text-sm">
 						<Link
 							href={"/forgot-password"}
 							className="text-slate-500 hover:text-slate-600 hover:underline">

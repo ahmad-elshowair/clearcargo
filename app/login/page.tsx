@@ -37,7 +37,7 @@ const LoginPage = async () => {
 							Cargo
 						</h1>
 					</section>
-					<section className="flex flex-col bg-green-500 lg:h-full w-full md:w-2/3 lg:w-3/5 px-3 md:px-4 lg:px-8 py-10 md:py-10 lg:py-20 rounded-xl lg:justify-center">
+					<section className="flex flex-col bg-green-500 lg:h-full md:w-6/12 px-3 md:px-6 lg:px-12 py-10 md:py-20 lg:py-20 rounded-xl justify-center">
 						<h2 className="text-center text-slate-800 text-xl lg:text-3xl font-bold lg:mb-10 mb-4">
 							Welcome Back
 						</h2>
