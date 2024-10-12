@@ -1,5 +1,5 @@
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { v4 as uuidv4 } from "uuid";
-import { createSupabaseServerClient } from "./supabase/server";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = [
@@ -9,16 +9,14 @@ const ALLOWED_FILE_TYPES = [
 	"application/pdf",
 ];
 
-export const uploadFileServer = async (
-	file: File,
-	folder: "invoices" | "loading_bills" | "vat_receipts",
-) => {
+export const uploadFile = async (file: File, folder: string) => {
 	try {
 		if (!file) {
 			console.error("No file provided");
 			return {
 				status: "error",
 				message: "No file provided",
+				url: null,
 			};
 		}
 		if (file.size > MAX_FILE_SIZE) {
@@ -26,6 +24,7 @@ export const uploadFileServer = async (
 			return {
 				status: "error",
 				message: "File size exceeds maximum limit of 5MB",
+				url: null,
 			};
 		}
 
@@ -36,11 +35,10 @@ export const uploadFileServer = async (
 			return {
 				status: "error",
 				message: "Invalid file type. Only PDF, JPEG, JPG, and PNG are allowed",
+				url: null,
 			};
 		}
-
-		// Use the Admin client for server-side operations
-		const supabase = await createSupabaseServerClient();
+		const supabase = createSupabaseBrowserClient();
 
 		const fileEXT = file.name.split(".").pop();
 		const fileName = `${folder}/${uuidv4()}.${fileEXT}`;
@@ -54,6 +52,7 @@ export const uploadFileServer = async (
 			return {
 				status: "error",
 				message: error.message,
+				url: null,
 			};
 		}
 
@@ -71,6 +70,7 @@ export const uploadFileServer = async (
 		return {
 			status: "error",
 			message: (error as Error).message,
+			url: null,
 		};
 	}
 };

@@ -27,7 +27,7 @@ export type TClearance = {
 export type TClearanceResult = {
 	status: "error" | "success";
 	message: string;
-	data: TClearance | null;
+	data?: TClearance;
 };
 export type TFilteredClearanceResult = {
 	status: "error" | "success";

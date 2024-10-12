@@ -1,4 +1,4 @@
-import { createSupabaseAdminClient } from "./supabase/admin";
+import { createSupabaseAdminClient } from "./admin";
 
 export const deleteFile = async (
 	fileUrl: string,

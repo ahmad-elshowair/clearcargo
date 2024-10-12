@@ -1,18 +1,15 @@
 "use server";
-import { deleteFile } from "@/lib/deleteFile";
+
 import { sendEmailNotification } from "@/lib/email";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { uploadFileServer } from "@/lib/uploadFile";
 import {
 	TClearance,
 	TClearanceResult,
 	TClearanceTable,
 	TFilteredClearanceResult,
 } from "@/types/clearance";
-import { UserType } from "@/types/user";
 import { revalidatePath } from "next/cache";
-
 import { fetchAllAdmins } from "./admin";
 
 const CLEARANCES_PER_PAGE = 10;
@@ -116,23 +113,8 @@ export const fetchFilteredClearances = async (
 	}
 };
 
-// Define FileField and ClearanceField
-type FileField = "invoice" | "vat_receipt" | "loading_bill";
-type ClearanceField = FileField | "arrival_date" | "is_vat_paid" | "port_id";
-
-const isClearanceField = (key: string): key is ClearanceField => {
-	return [
-		"invoice",
-		"vat_receipt",
-		"loading_bill",
-		"arrival_date",
-		"is_vat_paid",
-		"port_id",
-	].includes(key);
-};
-
 // CREATE A NEW CLEARANCE
-export const createClearance = async (formData: FormData) => {
+export const createClearance = async (clearance: TClearance) => {
 	try {
 		const supabase = await createSupabaseServerClient();
 
@@ -144,68 +126,28 @@ export const createClearance = async (formData: FormData) => {
 			return {
 				status: "error",
 				message: userError.message,
+				data: null,
 			};
 		}
 
-		if (!user) {
-			return {
-				status: "error",
-				message: "USER NOT AUTHENTICATED",
-			};
-		}
-
-		// GET THE USER ID
-		const user_id = user.user.id;
-
-		// INITIALIZE THE CLEARANCE DATA OBJECT
-		const createData: Partial<TClearance> = {};
-
-		// PARSE THE ARRIVAL DATE
-		for (const [key, value] of formData.entries()) {
-			if (!isClearanceField(key)) {
-				console.warn(`WARNING: UNKNOWN FORM DATA KEY: ${key}`);
-				continue;
-			}
-			if (value instanceof File && value.size > 0) {
-				const folder =
-					key === "invoice"
-						? "invoices"
-						: key === "loading_bill"
-						? "loading_bills"
-						: "vat_receipts";
-				const uploadResponse = await uploadFileServer(value, folder);
-
-				if (uploadResponse.status === "error") {
-					console.error("ERROR UPLOADING FILE", uploadResponse.message);
-					return {
-						status: "error",
-						message: uploadResponse.message,
-					};
-				}
-				createData[key as FileField] = uploadResponse.url;
-			} else if (key === "arrival_date") {
-				createData[key] = new Date(value as string).toISOString();
-			} else if (key === "is_vat_paid") {
-				createData[key] = value === "true";
-			} else if (key === "port_id") {
-				createData[key] = String(value);
-			} else {
-				console.warn(`WARNING: UNKNOWN FORM DATA KEY: ${key}`);
-			}
-		}
-
-		createData.created_by = user_id;
 		// CREATE THE CLEARANCE IN SUPABASE
-		const { data: createdClearance, error: clearanceError } =
-			await supabase.rpc("create_clearance", {
-				clearance_data: createData,
-			});
+		const { data: clearanceData, error } = await supabase.rpc(
+			"create_clearance",
+			{
+				clearance_data: {
+					...clearance,
+					arrival_date: new Date(clearance.arrival_date).toISOString(),
+					created_by: user.user.id,
+				},
+			},
+		);
 
-		if (clearanceError) {
-			console.error("ERROR CREATING CLEARANCE", clearanceError.message);
+		if (error) {
+			console.error("ERROR CREATING CLEARANCE", error.message);
 			return {
 				status: "error",
-				message: clearanceError.message,
+				message: error.message,
+				data: null,
 			};
 		}
 
@@ -216,6 +158,7 @@ export const createClearance = async (formData: FormData) => {
 			return {
 				status: "error",
 				message: adminResult.message,
+				data: null,
 			};
 		}
 
@@ -223,16 +166,14 @@ export const createClearance = async (formData: FormData) => {
 			? adminResult.data.map((admin) => admin.email)
 			: [];
 
-		const emailResult = await sendEmailNotification(
-			adminEmails,
-			createdClearance,
-		);
+		const emailResult = await sendEmailNotification(adminEmails, clearanceData);
 
 		if (emailResult.status === "error") {
 			console.error("ERROR SENDING EMAIL NOTIFICATION", emailResult.message);
 			return {
 				status: "error",
 				message: emailResult.message,
+				data: null,
 			};
 		}
 
@@ -241,13 +182,14 @@ export const createClearance = async (formData: FormData) => {
 		return {
 			status: "success",
 			message: "CLEARANCE CREATED SUCCESSFULLY",
-			data: createData as TClearance,
+			data: clearanceData as TClearance,
 		};
 	} catch (error) {
 		console.error("ERROR CREATING CLEARANCE", error);
 		return {
 			status: "error",
 			message: (error as Error).message,
+			data: null,
 		};
 	}
 };
@@ -262,15 +204,13 @@ export const fetchClearanceById = async (
 		const { data, error } = await supabase
 			.from("clearances")
 			.select("*")
-			.eq("id", id)
-			.maybeSingle();
+			.eq("id", id);
 
 		if (error) {
 			console.error("ERROR FETCHING CLEARANCE BY ID", error.message);
 			return {
 				status: "error",
 				message: error.message,
-				data: null,
 			};
 		}
 
@@ -285,7 +225,6 @@ export const fetchClearanceById = async (
 		return {
 			status: "error",
 			message: (error as Error).message,
-			data: null,
 		};
 	}
 };
@@ -301,7 +240,6 @@ export const deleteClearance = async (
 			return {
 				status: "error",
 				message: "CLEARANCE ID NOT PROVIDED",
-				data: null,
 			};
 		}
 		const supabase = await createSupabaseServerClient();
@@ -314,7 +252,6 @@ export const deleteClearance = async (
 			return {
 				status: "error",
 				message: clearanceResult.message,
-				data: null,
 			};
 		}
 		const clearance = clearanceResult.data;
@@ -331,7 +268,6 @@ export const deleteClearance = async (
 			return {
 				status: "error",
 				message: userError.message,
-				data: null,
 			};
 		}
 
@@ -339,11 +275,10 @@ export const deleteClearance = async (
 			return {
 				status: "error",
 				message: "USER NOT AUTHENTICATED",
-				data: null,
 			};
 		}
 
-		const user_type: UserType = user.user_metadata.type;
+		const user_type = user.user_metadata.type as "admin" | "customer";
 		const user_id = user.id;
 
 		// CHECK IF THE USER IS AN ADMIN OR THE OWNER OF THE CLEARANCE
@@ -359,7 +294,6 @@ export const deleteClearance = async (
 				return {
 					status: "error",
 					message: clearanceError.message,
-					data: null,
 				};
 			}
 
@@ -369,14 +303,12 @@ export const deleteClearance = async (
 			return {
 				status: "success",
 				message: "CLEARANCE DELETED SUCCESSFULLY",
-				data: clearance,
 			};
 		} else {
 			console.error("ERROR: USER IS NOT AUTHORIZED TO DELETE THIS CLEARANCE");
 			return {
 				status: "error",
 				message: "USER IS NOT AUTHORIZED TO DELETE THIS CLEARANCE",
-				data: null,
 			};
 		}
 	} catch (error) {
@@ -384,143 +316,6 @@ export const deleteClearance = async (
 		return {
 			status: "error",
 			message: (error as Error).message,
-			data: null,
-		};
-	}
-};
-
-// UPDATE A CLEARANCE
-export const updateClearance = async (
-	id: string,
-	formData: FormData,
-): Promise<TClearanceResult> => {
-	try {
-		const supabase = await createSupabaseServerClient();
-
-		// FETCH THE CLEARANCE TO BE UPDATED
-		const currentClearanceResult = await fetchClearanceById(id);
-
-		if (currentClearanceResult.status === "error") {
-			console.error("ERROR FETCHING CLEARANCE", currentClearanceResult.message);
-			return {
-				status: "error",
-				message: currentClearanceResult.message,
-				data: null,
-			};
-		}
-
-		const currentClearance = currentClearanceResult.data;
-
-		// GET THE LOGGED IN USER
-		const {
-			data: { user },
-			error: userError,
-		} = await supabase.auth.getUser();
-
-		// RETURN ERROR IF FAILED TO GET THE USER
-		if (userError) {
-			console.error("ERROR GETTING USER ID", userError.message);
-			return {
-				status: "error",
-				message: userError.message,
-				data: null,
-			};
-		}
-
-		if (!user) {
-			return {
-				status: "error",
-				message: "USER NOT AUTHENTICATED",
-				data: null,
-			};
-		}
-
-		const user_type: UserType = user.user_metadata.type as "admin" | "customer";
-		const user_id = user.id;
-
-		// CHECK AUTHORIZATION
-		if (user_type !== "admin" && currentClearance?.created_by !== user_id) {
-			console.error("ERROR: USER IS NOT AUTHORIZED TO UPDATE THIS CLEARANCE");
-			return {
-				status: "error",
-				message: "USER IS NOT AUTHORIZED TO UPDATE THIS CLEARANCE",
-				data: null,
-			};
-		}
-
-		// PREPARE THE UPDATED DATA.
-		const updatedData: Partial<TClearance> = {};
-
-		const filesFields: FileField[] = ["invoice", "vat_receipt", "loading_bill"];
-
-		// PROCESS FORM DATA.
-		for (const [key, value] of formData.entries()) {
-			if (filesFields.includes(key as FileField)) {
-				if (value instanceof File && value.size > 0) {
-					const folder =
-						key === "invoice"
-							? "invoices"
-							: key === "loading_bill"
-							? "loading_bills"
-							: "vat_receipts";
-					const uploadResponse = await uploadFileServer(value, folder);
-					if (uploadResponse.status === "error") {
-						console.error("ERROR UPLOADING FILE", uploadResponse.message);
-						return {
-							status: "error",
-							message: uploadResponse.message,
-							data: null,
-						};
-					}
-					updatedData[key as FileField] = uploadResponse.url;
-
-					// DELETE THE OLD FILES IF IT EXISTS.
-					const oldFileUrl = currentClearance?.[key as FileField];
-					if (oldFileUrl) {
-						const deleteResponse = await deleteFile(oldFileUrl, folder);
-						if (deleteResponse.status === "error") {
-							console.warn("ERROR DELETING OLD FILE", deleteResponse.message);
-						}
-					}
-				}
-			} else if (key === "arrival_date") {
-				updatedData[key] = new Date(value as string).toISOString();
-			} else if (key === "is_vat_paid") {
-				updatedData.is_vat_paid = value === "true";
-			} else if (key === "port_id") {
-				updatedData[key] = value as string;
-			} else {
-				console.warn(`Ignored unknown field: ${key}`);
-			}
-		}
-
-		// UPDATE THE CLEARANCE IN SUPABASE
-		const { data: updatedClearance, error: clearanceError } = await supabase
-			.from("clearances")
-			.update(updatedData)
-			.eq("id", id)
-			.maybeSingle();
-
-		if (clearanceError) {
-			console.error("ERROR UPDATING CLEARANCE", clearanceError.message);
-			return {
-				status: "error",
-				message: clearanceError.message,
-				data: null,
-			};
-		}
-
-		return {
-			status: "success",
-			message: "CLEARANCE UPDATED SUCCESSFULLY",
-			data: updatedClearance,
-		};
-	} catch (error) {
-		console.error("ERROR UPDATING CLEARANCE", error);
-		return {
-			status: "error",
-			message: (error as Error).message,
-			data: null,
 		};
 	}
 };

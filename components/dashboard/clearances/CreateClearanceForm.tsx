@@ -29,6 +29,7 @@ import {
 	CreateClearanceInput,
 	CreateClearanceSchema,
 } from "@/lib/schemas/clearance";
+import { uploadFile } from "@/lib/supabase/uploadFile";
 import { cn } from "@/lib/utils";
 import { Port } from "@/types/port";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -62,42 +63,67 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 	const onSubmit = async (data: CreateClearanceInput) => {
 		setIsSubmitting(true);
 		try {
-			// CREATE A formData OBJECT TO SEND THE FILES
-			const formData = new FormData();
+			// UPLOAD THE CLEARANCE FILES TO SUPABASE STORAGE
+			const fileUploads = await Promise.all([
+				data.invoice instanceof File
+					? uploadFile(data.invoice, "invoices")
+					: { status: "success", url: data.invoice, message: null },
+				data.vat_receipt instanceof File
+					? uploadFile(data.vat_receipt, "vat_receipts")
+					: { status: "success", url: data.vat_receipt, message: null },
+				data.loading_bill instanceof File
+					? uploadFile(data.loading_bill, "loading_bills")
+					: { status: "success", url: data.loading_bill, message: null },
+			]);
 
-			// APPEND ALL FORM DATA TO THE formData OBJECT
-			Object.entries(data).forEach(([key, value]) => {
-				if (value instanceof File) {
-					formData.append(key, value);
-				} else if (value !== null && value !== undefined) {
-					formData.append(key, String(value));
-				}
-			});
+			// GET THE UPLOADED FILE URLS
+			const [invoiceResult, vatReceiptResult, loadingBillResult] =
+				fileUploads.map((file) => file.url);
+
+			// GET THE UPLOADED FILE ERRORS IF ANY
+			const uploadErrors = fileUploads.filter(
+				(file) => file.status === "error",
+			);
+
+			// IF THERE ARE ERRORS IN UPLOADING FILES, SHOW THEM IN A TOAST MESSAGE AND RETURN
+			if (uploadErrors.length > 0) {
+				const errorMessages = uploadErrors
+					.map((error) => error.message)
+					.filter((message) => message !== null)
+					.join(" - ");
+
+				toast({
+					title: "UPLOADING FILES",
+					description: errorMessages,
+					variant: "destructive",
+				});
+
+				console.error("UPLOADING FILES ERROR", errorMessages);
+				return;
+			}
+
 			// CREATE THE CLEARANCE
-			const result = await createClearance(formData);
+			const result = await createClearance({
+				...data,
+				arrival_date: data.arrival_date.toISOString(),
+				invoice: invoiceResult,
+				vat_receipt: vatReceiptResult,
+				loading_bill: loadingBillResult,
+			});
 
 			// IF THERE IS AN ERROR IN CREATING THE CLEARANCE, SHOW THE MESSAGE IN A TOAST MESSAGE
 			if (result.status === "error") {
 				console.error("ERROR IN CLEARANCE CREATION", result.message);
 				toast({
-					title: "Creation of Clearance",
-					description: (
-						<pre className="p-2 bg-red-100 text-red-800 rounded-md w-[350px]">
-							<p>{result.message}</p>
-						</pre>
-					),
-					duration: 5000,
+					title: "CREATION OF CLEARANCE",
+					description: result.message,
+					variant: "destructive",
 				});
 			} else {
 				// IF THERE IS NO ERROR, SHOW A SUCCESS MESSAGE, REDIRECT TO THE CLEARANCES PAGE
 				toast({
-					title: "Creation of Clearance",
-					description: (
-						<pre className="p-2 bg-green-100 text-green-800 rounded-md w-[350px]">
-							<p>{result.message}</p>
-						</pre>
-					),
-					duration: 5000,
+					title: "CREATION OF CLEARANCE",
+					description: result.message,
 				});
 				router.push("/dashboard/clearances");
 			}
@@ -105,12 +131,8 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 			console.error("ERROR IN FORM SUBMISSION", error);
 			toast({
 				title: "Error in form submission",
-				description: (
-					<pre className="p-2 bg-red-100 text-red-800 rounded-md w-[350px]">
-						<p>{(error as Error).message}</p>
-					</pre>
-				),
-				duration: 5000,
+				description: (error as Error).message,
+				variant: "destructive",
 			});
 		} finally {
 			setIsSubmitting(false);
@@ -224,7 +246,7 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 						/>
 					</div>
 
-					<section className="flex flex-col md:flex-row w-full items-center gap-3">
+					<section className="flex flex-col md:flex-row w-full items-center mb-10 gap-3">
 						<fieldset className="mb-3 md:w-1/2">
 							<legend className="mb-3 block text-md font-bold text-green-900">
 								Is VAT Paid?
