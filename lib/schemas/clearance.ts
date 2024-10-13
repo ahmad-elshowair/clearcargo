@@ -16,11 +16,11 @@ const fileSchema = z
 		"only .jpeg, .jpg, .png, and .pdf files are allowed.",
 	);
 
-export const CreateClearanceSchema = z
+export const ClearanceSchema = z
 	.object({
 		port_id: z.string().uuid(),
 		is_vat_paid: z.boolean(),
-		vat_receipt: z.union([fileSchema, z.null()]).optional(),
+		vat_receipt: z.union([fileSchema, z.string().url(), z.null()]).optional(),
 		arrival_date: z.date(),
 		invoice: z.union([fileSchema, z.string().url(), z.null()]),
 		loading_bill: z.union([fileSchema, z.string().url(), z.null()]),
@@ -28,7 +28,10 @@ export const CreateClearanceSchema = z
 	.refine(
 		(data) => {
 			if (data.is_vat_paid) {
-				return data.vat_receipt instanceof File;
+				return (
+					data.vat_receipt instanceof File ||
+					(typeof data.vat_receipt === "string" && data.vat_receipt.length > 0)
+				);
 			}
 			return true;
 		},
@@ -38,4 +41,5 @@ export const CreateClearanceSchema = z
 		},
 	);
 
-export type CreateClearanceInput = z.infer<typeof CreateClearanceSchema>;
+export type CreateClearanceInput = z.infer<typeof ClearanceSchema>;
+export type updateClearanceInput = z.infer<typeof ClearanceSchema>;

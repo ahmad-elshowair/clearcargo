@@ -1,10 +1,7 @@
 import Customer from "@/components/dashboard/customers/Customer";
 import DeleteModal from "@/components/DeleteModal";
-import { Button } from "@/components/ui/button";
 import { TUserTable } from "@/types/user";
 import Image from "next/image";
-import Link from "next/link";
-import { FaPencil } from "react-icons/fa6";
 
 const CustomersList = ({ users }: { users: TUserTable[] | null }) => {
 	return (
@@ -73,11 +70,11 @@ const CustomersList = ({ users }: { users: TUserTable[] | null }) => {
 										</td>
 										<td className="whitespace-nowrap px-3">
 											<div className="flex items-center gap-3">
-												<Link href={`/dashboard/customers/${user.id}/edit`}>
+												{/* <Link href={`/dashboard/customers/${user.id}/edit`}>
 													<Button className="bg-transparent text-green-600 hover:text-green-50 hover:bg-green-600 px-2 border border-green-600 h-fit">
 														<FaPencil className="w-5" />
 													</Button>
-												</Link>
+												</Link> */}
 												<DeleteModal label="Customer" id={user.id} />
 											</div>
 										</td>

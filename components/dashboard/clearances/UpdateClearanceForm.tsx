@@ -1,5 +1,5 @@
 "use client";
-import { createClearance } from "@/actions/clearance";
+import { updateClearance } from "@/actions/clearance";
 import { FileInputField } from "@/components/FileInputField";
 import { useToast } from "@/components/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -25,42 +25,70 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { ClearanceSchema, CreateClearanceInput } from "@/lib/schemas/clearance";
+import { ClearanceSchema, updateClearanceInput } from "@/lib/schemas/clearance";
 import { cn } from "@/lib/utils";
+import { TClearance } from "@/types/clearance";
 import { Port } from "@/types/port";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdAttachMoney, MdOutlineMoneyOff } from "react-icons/md";
 
-export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
+interface UpdateClearanceFormProps {
+	ports: Port[] | null;
+	clearance?: TClearance;
+}
+export const UpdateClearanceForm: FC<UpdateClearanceFormProps> = ({
+	ports,
+	clearance,
+}) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const router = useRouter();
 	const { toast } = useToast();
 
-	const form = useForm<CreateClearanceInput>({
+	console.log("the current clearance is", clearance);
+
+	const form = useForm<updateClearanceInput>({
 		resolver: zodResolver(ClearanceSchema),
 		defaultValues: {
-			port_id: "",
-			is_vat_paid: false,
-			vat_receipt: null,
-			invoice: undefined,
-			loading_bill: undefined,
-			arrival_date: new Date(),
+			port_id: clearance?.port_id,
+			is_vat_paid: clearance?.is_vat_paid,
+			vat_receipt: clearance?.vat_receipt,
+			invoice: clearance?.invoice,
+			loading_bill: clearance?.loading_bill,
+			arrival_date: new Date(clearance?.arrival_date ?? new Date()),
 		},
 	});
 
 	// WATCHING FOR VAT PAYMENT
 	const isVatPaid = form.watch("is_vat_paid");
 
-	const onSubmit = async (data: CreateClearanceInput) => {
+	const onSubmit = async (data: updateClearanceInput) => {
 		setIsSubmitting(true);
 		try {
 			// CREATE A formData OBJECT TO SEND THE FILES
 			const formData = new FormData();
+
+			// ENSURE clearance_id IS AVAILABLE AND APPEND IT TO THE formData OBJECT
+			if (!clearance?.id) {
+				toast({
+					title: "Update a Clearance",
+					description: (
+						<div className="p-2 bg-red-200 text-red-800 rounded-md w-[350px]">
+							<p>Clearance ID is missing. Unable to update.</p>
+						</div>
+					),
+
+					duration: 5000,
+				});
+				setIsSubmitting(false);
+				return;
+			}
+
+			formData.append("id", clearance.id);
 
 			// APPEND ALL FORM DATA TO THE formData OBJECT
 			Object.entries(data).forEach(([key, value]) => {
@@ -70,42 +98,43 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 					formData.append(key, String(value));
 				}
 			});
-			// CREATE THE CLEARANCE
-			const result = await createClearance(formData);
 
-			// IF THERE IS AN ERROR IN CREATING THE CLEARANCE, SHOW THE MESSAGE IN A TOAST MESSAGE
+			// CREATE THE CLEARANCE
+			const result = await updateClearance(formData);
+
+			// IF THERE IS AN ERROR IN UPDATING THE CLEARANCE, SHOW THE MESSAGE IN A TOAST MESSAGE
 			if (result.status === "error") {
-				console.error("ERROR IN CLEARANCE CREATION", result.message);
+				console.error("ERROR IN CLEARANCE UPDATE", result.message);
 				toast({
-					title: "Creation of Clearance",
+					title: "Update of Clearance",
 					description: (
-						<pre className="p-2 bg-red-100 text-red-800 rounded-md w-[350px]">
+						<div className="p-2 bg-red-100 text-red-800 rounded-md w-[350px]">
 							<p>{result.message}</p>
-						</pre>
+						</div>
 					),
 					duration: 5000,
 				});
 			} else {
 				// IF THERE IS NO ERROR, SHOW A SUCCESS MESSAGE, REDIRECT TO THE CLEARANCES PAGE
 				toast({
-					title: "Creation of Clearance",
+					title: "Update a Clearance",
 					description: (
-						<pre className="p-2 bg-green-100 text-green-800 rounded-md w-[350px]">
+						<div className="p-2 bg-green-100 text-green-800 rounded-md w-[350px]">
 							<p>{result.message}</p>
-						</pre>
+						</div>
 					),
 					duration: 5000,
 				});
-				router.push("/dashboard/clearances");
+				router.push("/dashboard/all-clearances");
 			}
 		} catch (error) {
-			console.error("ERROR IN FORM SUBMISSION", error);
+			console.error("ERROR IN FORM UPDATE", error);
 			toast({
-				title: "Error in form submission",
+				title: "Error in form update",
 				description: (
-					<pre className="p-2 bg-red-100 text-red-800 rounded-md w-[350px]">
+					<div className="p-2 bg-red-100 text-red-800 rounded-md w-[350px]">
 						<p>{(error as Error).message}</p>
-					</pre>
+					</div>
 				),
 				duration: 5000,
 			});
@@ -287,7 +316,7 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 				</section>
 				<section className="mt-4 flex justify-center md:justify-end gap-4">
 					<Link
-						href={"/dashboard/clearances"}
+						href={"/dashboard/all-clearances"}
 						className="px-8 text-sm font-medium text-green-600 bg-green-50 hover:bg-green-200 transition-colors duration-200 py-4 rounded-md">
 						Cancel
 					</Link>
@@ -296,7 +325,7 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 						className="h-fit rounded-md bg-green-500 py-4 px-8 text-sm font-medium transition-colors hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-50 active:bg-green-600 duration-200 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 text-green-50"
 						disabled={isSubmitting}
 						aria-disabled={isSubmitting}>
-						{isSubmitting ? "Creating..." : "Create"}
+						{isSubmitting ? "Saving..." : "Save"}
 					</Button>
 				</section>
 			</form>

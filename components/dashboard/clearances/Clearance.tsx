@@ -41,7 +41,8 @@ const Clearance = ({
 
 				<div className="flex justify-end gap-2">
 					{pathname === "/dashboard/all-clearances" && (
-						<Link href={`/dashboard/clearances/${clearance.clearance_id}/edit`}>
+						<Link
+							href={`/dashboard/all-clearances/${clearance.clearance_id}/edit`}>
 							<Button className="bg-transparent text-green-600 hover:text-green-50 hover:bg-green-600 px-2 border border-green-600 h-fit">
 								<FaPencil className="w-5" />
 							</Button>

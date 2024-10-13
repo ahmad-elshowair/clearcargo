@@ -6,7 +6,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { uploadFileServer } from "@/lib/uploadFile";
 import {
 	TClearance,
-	TClearanceResult,
 	TClearanceTable,
 	TFilteredClearanceResult,
 } from "@/types/clearance";
@@ -253,24 +252,20 @@ export const createClearance = async (formData: FormData) => {
 };
 
 // FETCH A CLEARANCE BY ID
-export const fetchClearanceById = async (
-	id: string,
-): Promise<TClearanceResult> => {
+export const fetchClearanceById = async (id: string) => {
 	try {
 		const supabase = await createSupabaseServerClient();
 
 		const { data, error } = await supabase
 			.from("clearances")
 			.select("*")
-			.eq("id", id)
-			.maybeSingle();
+			.eq("id", id);
 
 		if (error) {
 			console.error("ERROR FETCHING CLEARANCE BY ID", error.message);
 			return {
 				status: "error",
 				message: error.message,
-				data: null,
 			};
 		}
 
@@ -285,23 +280,18 @@ export const fetchClearanceById = async (
 		return {
 			status: "error",
 			message: (error as Error).message,
-			data: null,
 		};
 	}
 };
 
 // DELETE A CLEARANCE BY ID
 
-export const deleteClearance = async (
-	id: string,
-	link?: string,
-): Promise<TClearanceResult> => {
+export const deleteClearance = async (id: string, link?: string) => {
 	try {
 		if (!id) {
 			return {
 				status: "error",
 				message: "CLEARANCE ID NOT PROVIDED",
-				data: null,
 			};
 		}
 		const supabase = await createSupabaseServerClient();
@@ -314,7 +304,6 @@ export const deleteClearance = async (
 			return {
 				status: "error",
 				message: clearanceResult.message,
-				data: null,
 			};
 		}
 		const clearance = clearanceResult.data;
@@ -331,7 +320,6 @@ export const deleteClearance = async (
 			return {
 				status: "error",
 				message: userError.message,
-				data: null,
 			};
 		}
 
@@ -339,7 +327,6 @@ export const deleteClearance = async (
 			return {
 				status: "error",
 				message: "USER NOT AUTHENTICATED",
-				data: null,
 			};
 		}
 
@@ -359,7 +346,6 @@ export const deleteClearance = async (
 				return {
 					status: "error",
 					message: clearanceError.message,
-					data: null,
 				};
 			}
 
@@ -369,14 +355,12 @@ export const deleteClearance = async (
 			return {
 				status: "success",
 				message: "CLEARANCE DELETED SUCCESSFULLY",
-				data: clearance,
 			};
 		} else {
 			console.error("ERROR: USER IS NOT AUTHORIZED TO DELETE THIS CLEARANCE");
 			return {
 				status: "error",
 				message: "USER IS NOT AUTHORIZED TO DELETE THIS CLEARANCE",
-				data: null,
 			};
 		}
 	} catch (error) {
@@ -384,17 +368,24 @@ export const deleteClearance = async (
 		return {
 			status: "error",
 			message: (error as Error).message,
-			data: null,
 		};
 	}
 };
 
 // UPDATE A CLEARANCE
-export const updateClearance = async (
-	id: string,
-	formData: FormData,
-): Promise<TClearanceResult> => {
+export const updateClearance = async (formData: FormData) => {
 	try {
+		// GET THE CLEARANCE ID
+		const id = formData.get("id");
+
+		if (!id || typeof id !== "string") {
+			console.error("ERROR: Missing or invalid clearance ID");
+			return {
+				status: "error",
+				message: "Missing or invalid clearance ID",
+			};
+		}
+
 		const supabase = await createSupabaseServerClient();
 
 		// FETCH THE CLEARANCE TO BE UPDATED
@@ -405,7 +396,6 @@ export const updateClearance = async (
 			return {
 				status: "error",
 				message: currentClearanceResult.message,
-				data: null,
 			};
 		}
 
@@ -423,7 +413,6 @@ export const updateClearance = async (
 			return {
 				status: "error",
 				message: userError.message,
-				data: null,
 			};
 		}
 
@@ -431,11 +420,10 @@ export const updateClearance = async (
 			return {
 				status: "error",
 				message: "USER NOT AUTHENTICATED",
-				data: null,
 			};
 		}
 
-		const user_type: UserType = user.user_metadata.type as "admin" | "customer";
+		const user_type: UserType = user.user_metadata.type;
 		const user_id = user.id;
 
 		// CHECK AUTHORIZATION
@@ -444,7 +432,6 @@ export const updateClearance = async (
 			return {
 				status: "error",
 				message: "USER IS NOT AUTHORIZED TO UPDATE THIS CLEARANCE",
-				data: null,
 			};
 		}
 
@@ -469,14 +456,13 @@ export const updateClearance = async (
 						return {
 							status: "error",
 							message: uploadResponse.message,
-							data: null,
 						};
 					}
 					updatedData[key as FileField] = uploadResponse.url;
 
-					// DELETE THE OLD FILES IF IT EXISTS.
+					// DELETE THE OLD FILE IF IT EXISTS AND IS DIFFERENT FROM THE NEW ONE.
 					const oldFileUrl = currentClearance?.[key as FileField];
-					if (oldFileUrl) {
+					if (oldFileUrl && oldFileUrl !== uploadResponse.url) {
 						const deleteResponse = await deleteFile(oldFileUrl, folder);
 						if (deleteResponse.status === "error") {
 							console.warn("ERROR DELETING OLD FILE", deleteResponse.message);
@@ -506,7 +492,6 @@ export const updateClearance = async (
 			return {
 				status: "error",
 				message: clearanceError.message,
-				data: null,
 			};
 		}
 
@@ -520,7 +505,6 @@ export const updateClearance = async (
 		return {
 			status: "error",
 			message: (error as Error).message,
-			data: null,
 		};
 	}
 };

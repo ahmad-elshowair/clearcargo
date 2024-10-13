@@ -15,7 +15,6 @@ const ClearancesList = ({
 	clearances: TClearanceTable[] | undefined;
 }) => {
 	const pathname = usePathname();
-	console.log("the pathname is ", pathname);
 
 	return (
 		<section className="mt-6 flow-root">
@@ -157,7 +156,7 @@ const ClearancesList = ({
 											<div className="flex items-center gap-3">
 												{pathname === "/dashboard/all-clearances" && (
 													<Link
-														href={`/dashboard/clearances/${clearance.clearance_id}/edit`}>
+														href={`/dashboard/all-clearances/${clearance.clearance_id}/edit`}>
 														<Button className="bg-transparent text-green-600 hover:text-green-50 hover:bg-green-600 px-2 border border-green-600 h-fit">
 															<FaPencil className="w-5" />
 														</Button>

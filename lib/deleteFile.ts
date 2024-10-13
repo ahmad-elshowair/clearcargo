@@ -6,11 +6,15 @@ export const deleteFile = async (
 ) => {
 	try {
 		const supabase = createSupabaseAdminClient();
-		const fullPath = `${folder}/${fileUrl}`;
+
+		// EXTRACT THE FILE PATH FROM THE URL
+		const urlParts = fileUrl.split("/");
+		const fileName = urlParts[urlParts.length - 1];
+		const filePath = `${folder}/${fileName}`;
 
 		const { data, error } = await supabase.storage
-			.from("clearcargo")
-			.remove([fullPath]);
+			.from("ClearCargo")
+			.remove([filePath]);
 		if (error) {
 			console.error("ERROR DELETING FILE: ", error);
 			return {
@@ -27,7 +31,7 @@ export const deleteFile = async (
 		} else {
 			return {
 				status: "error",
-				message: "File not found",
+				message: "File not found or already deleted",
 			};
 		}
 	} catch (error) {

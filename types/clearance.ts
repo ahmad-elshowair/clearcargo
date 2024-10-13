@@ -14,7 +14,7 @@ export type TClearanceTable = {
 };
 
 export type TClearance = {
-	clearance_id?: string;
+	id: string;
 	port_id: string;
 	created_by?: string;
 	is_vat_paid: boolean;
