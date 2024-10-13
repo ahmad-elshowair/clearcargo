@@ -16,12 +16,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { z } from "zod";
 import { Button } from "./ui/button";
 
 type LoginFormData = z.infer<typeof loginSchema>;
 export const LoginForm = () => {
 	const [isLoading, setIsLoading] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
 	const { toast } = useToast();
 	const router = useRouter();
 	const form = useForm<LoginFormData>({
@@ -31,6 +33,7 @@ export const LoginForm = () => {
 			password: "",
 		},
 	});
+	const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
 	const onSubmit = async (data: LoginFormData) => {
 		setIsLoading(true);
@@ -101,12 +104,24 @@ export const LoginForm = () => {
 										Password
 									</FormLabel>
 									<FormControl>
-										<Input
-											type="password"
-											placeholder="********"
-											{...field}
-											className="bg-green-200 h-10"
-										/>
+										<div className="relative">
+											<Input
+												type={showPassword ? "text" : "password"}
+												placeholder="********"
+												{...field}
+												className="bg-green-200 h-10"
+											/>
+											<button
+												type="button"
+												className="absolute inset-y-0 right-0 pr-3 flex items-center"
+												onClick={togglePasswordVisibility}>
+												{showPassword ? (
+													<FaEyeSlash className="h-5 w-5 text-gray-500" />
+												) : (
+													<FaEye className="h-5 w-5 text-gray-500" />
+												)}
+											</button>
+										</div>
 									</FormControl>
 									<FormMessage />
 								</FormItem>

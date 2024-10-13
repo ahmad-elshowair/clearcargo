@@ -17,11 +17,11 @@ const CreateCustomerPage = () => {
 	return (
 		<section className="flex lg:min-h-screen xl:min-h-screen h-[calc(100vh-168px)] p-5 w-full flex-col gap-3">
 			<section className="mt-10">
-				<Suspense>
+				<Suspense fallback={<div>Loading...</div>}>
 					<Breadcrumb breadcrumbs={breadcrumbs} />
 				</Suspense>
 			</section>
-			<Suspense>
+			<Suspense fallback={<div>Loading...</div>}>
 				{/* create customer form goes here  */}
 				<CreateCustomerForm />
 			</Suspense>
