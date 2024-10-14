@@ -1,9 +1,6 @@
 import { createSupabaseAdminClient } from "./supabase/admin";
 
-export const deleteFile = async (
-	fileUrl: string,
-	folder: "invoices" | "loading_bills" | "vat_receipts",
-) => {
+export const deleteFile = async (fileUrl: string, folder: string) => {
 	try {
 		const supabase = createSupabaseAdminClient();
 

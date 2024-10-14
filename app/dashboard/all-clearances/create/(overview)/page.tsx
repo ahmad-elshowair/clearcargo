@@ -26,7 +26,7 @@ const AdminCreateClearancePage = async () => {
 			</section>
 			<Suspense fallback={<div>Loading...</div>}>
 				{/* create clearance form goes here  */}
-				<CreateClearanceForm ports={data} />
+				<CreateClearanceForm ports={data} link="/dashboard/all-clearances" />
 			</Suspense>
 		</section>
 	);

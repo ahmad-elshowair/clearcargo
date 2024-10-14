@@ -119,6 +119,7 @@ export const fetchFilteredClearances = async (
 type FileField = "invoice" | "vat_receipt" | "loading_bill";
 type ClearanceField = FileField | "arrival_date" | "is_vat_paid" | "port_id";
 
+// Check if a key is a ClearanceField
 const isClearanceField = (key: string): key is ClearanceField => {
 	return [
 		"invoice",
@@ -131,7 +132,7 @@ const isClearanceField = (key: string): key is ClearanceField => {
 };
 
 // CREATE A NEW CLEARANCE
-export const createClearance = async (formData: FormData) => {
+export const createClearance = async (formData: FormData, link?: string) => {
 	try {
 		const supabase = await createSupabaseServerClient();
 
@@ -222,6 +223,7 @@ export const createClearance = async (formData: FormData) => {
 			? adminResult.data.map((admin) => admin.email)
 			: [];
 
+		// SEND EMAIL NOTIFICATION TO ALL ADMINS
 		const emailResult = await sendEmailNotification(
 			adminEmails,
 			createdClearance,
@@ -235,8 +237,9 @@ export const createClearance = async (formData: FormData) => {
 			};
 		}
 
-		// SEND EMAIL NOTIFICATION TO ALL ADMINS
-
+		if (link) {
+			revalidatePath(link);
+		}
 		return {
 			status: "success",
 			message: "CLEARANCE CREATED SUCCESSFULLY",
@@ -285,7 +288,6 @@ export const fetchClearanceById = async (id: string) => {
 };
 
 // DELETE A CLEARANCE BY ID
-
 export const deleteClearance = async (id: string, link?: string) => {
 	try {
 		if (!id) {
@@ -335,6 +337,25 @@ export const deleteClearance = async (id: string, link?: string) => {
 
 		// CHECK IF THE USER IS AN ADMIN OR THE OWNER OF THE CLEARANCE
 		if (user_type === "admin" || clearance?.created_by === user_id) {
+			// DELETE ASSOCIATED FILES
+
+			const filesToDelete = [
+				{ url: clearance?.invoice, folder: "invoices" },
+
+				{ url: clearance?.loading_bill, folder: "loading_bills" },
+				{ url: clearance?.vat_receipt, folder: "vat_receipts" },
+			];
+
+			for (const file of filesToDelete) {
+				if (file.url) {
+					const deleteResponse = await deleteFile(file.url, file.folder);
+					if (deleteResponse.status === "error") {
+						console.warn(
+							`ERROR DELETING FILE: ${file.url} ${deleteResponse.message}`,
+						);
+					}
+				}
+			}
 			// DELETE THE CLEARANCE IN SUPABASE
 			const { error: clearanceError } = await supabase
 				.from("clearances")
@@ -495,6 +516,7 @@ export const updateClearance = async (formData: FormData) => {
 			};
 		}
 
+		revalidatePath("/dashboard/all-clearances");
 		return {
 			status: "success",
 			message: "CLEARANCE UPDATED SUCCESSFULLY",

@@ -32,11 +32,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdAttachMoney, MdOutlineMoneyOff } from "react-icons/md";
 
-export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
+interface CreateClearanceFormProps {
+	ports: Port[] | null;
+	link?: string
+}
+export const CreateClearanceForm: FC<CreateClearanceFormProps> = ({ ports , link}) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const router = useRouter();
 	const { toast } = useToast();
@@ -71,7 +75,7 @@ export const CreateClearanceForm = ({ ports }: { ports: Port[] | null }) => {
 				}
 			});
 			// CREATE THE CLEARANCE
-			const result = await createClearance(formData);
+			const result = await createClearance(formData, link);
 
 			// IF THERE IS AN ERROR IN CREATING THE CLEARANCE, SHOW THE MESSAGE IN A TOAST MESSAGE
 			if (result.status === "error") {
