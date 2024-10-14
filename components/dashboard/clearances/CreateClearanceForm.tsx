@@ -38,9 +38,12 @@ import { MdAttachMoney, MdOutlineMoneyOff } from "react-icons/md";
 
 interface CreateClearanceFormProps {
 	ports: Port[] | null;
-	link?: string
+	link?: string;
 }
-export const CreateClearanceForm: FC<CreateClearanceFormProps> = ({ ports , link}) => {
+export const CreateClearanceForm: FC<CreateClearanceFormProps> = ({
+	ports,
+	link,
+}) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const router = useRouter();
 	const { toast } = useToast();
@@ -100,7 +103,7 @@ export const CreateClearanceForm: FC<CreateClearanceFormProps> = ({ ports , link
 					),
 					duration: 5000,
 				});
-				router.push("/dashboard/clearances");
+				router.push(link!);
 			}
 		} catch (error) {
 			console.error("ERROR IN FORM SUBMISSION", error);
@@ -291,7 +294,7 @@ export const CreateClearanceForm: FC<CreateClearanceFormProps> = ({ ports , link
 				</section>
 				<section className="mt-4 flex justify-center md:justify-end gap-4">
 					<Link
-						href={"/dashboard/clearances"}
+						href={link!}
 						className="px-8 text-sm font-medium text-green-600 bg-green-50 hover:bg-green-200 transition-colors duration-200 py-4 rounded-md">
 						Cancel
 					</Link>
