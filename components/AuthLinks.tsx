@@ -1,16 +1,18 @@
 "use client";
 import { logout } from "@/actions/auth";
+import { UserType } from "@/types/user";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-	FaArrowRightFromBracket,
-	FaArrowRightToBracket,
-	FaUserPlus,
-} from "react-icons/fa6";
+import { FC } from "react";
+import { FaAddressCard, FaArrowRightFromBracket } from "react-icons/fa6";
 import { useToast } from "./hooks/use-toast";
 
-const AuthLinks = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
+interface AuthLinksProps {
+	userType: UserType;
+	first_name: string;
+}
+const AuthLinks: FC<AuthLinksProps> = ({ userType, first_name }) => {
 	const router = useRouter();
 	const pathname = usePathname();
 	const { toast } = useToast();
@@ -20,14 +22,23 @@ const AuthLinks = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 			if (result.status === "success") {
 				toast({
 					title: "Logout",
-					description: result.message,
+					description: (
+						<div className="bg-green-100 p-2 w-[350px]">
+							<p className="text-green-500 text-sm">{result.message}</p>
+						</div>
+					),
+					duration: 5000,
 				});
 				router.push("/login");
 			} else {
 				toast({
 					title: "Logout",
-					description: result.message,
-					variant: "destructive",
+					description: (
+						<div className="bg-red-100 p-2 w-[350px]">
+							<p className="text-red-500 text-sm">{result.message}</p>
+						</div>
+					),
+					duration: 5000,
 				});
 			}
 		} catch (error) {
@@ -36,39 +47,25 @@ const AuthLinks = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 	};
 	return (
 		<>
-			{isLoggedIn ? (
-				<button
-					onClick={handleLogout}
-					className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-semibold lg:flex-none lg:justify-start md:p-2 md:px-3 shadow hover:bg-green-500 text-[#2A3940] bg-emerald-100 hover:text-green-50 duration-200 ease-in-out">
-					<FaArrowRightFromBracket className="w-6" />
-					<span className="hidden sm:block">logout</span>
-				</button>
-			) : (
-				<>
-					<Link
-						href={"/login"}
-						className={clsx(
-							"flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-semibold lg:flex-none lg:justify-start md:p-2 md:px-3 shadow hover:bg-green-500 text-[#2A3940] bg-emerald-100 hover:text-green-50  duration-200 ease-in-out",
-							{
-								"bg-green-500 text-orange-50": pathname === "/login",
-							},
-						)}>
-						<FaArrowRightToBracket className="w-6 font-bold" />
-						<span className="hidden sm:block">Login</span>
-					</Link>
-					<Link
-						href={"/register"}
-						className={clsx(
-							"flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-semibold lg:flex-none lg:justify-start md:p-2 md:px-3 shadow hover:bg-green-500 text-[#2A3940] bg-emerald-100 hover:text-green-50  duration-200 ease-in-out",
-							{
-								"bg-green-500 text-orange-50": pathname === "/register",
-							},
-						)}>
-						<FaUserPlus className="w-6 font-bold" />
-						<span className="sm:hidden lg:block">Register</span>
-					</Link>
-				</>
+			{userType === "customer" && (
+				<Link
+					href="/profile"
+					className={clsx(
+						"flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-semibold lg:flex-none lg:justify-start md:p-2 md:px-3 shadow hover:bg-green-500 text-[#2A3940] bg-emerald-100 hover:text-green-50  duration-200 ease-in-out",
+						{
+							"bg-green-500 text-orange-50": pathname === "/profile",
+						},
+					)}>
+					<FaAddressCard className="w-6" />
+					<span className="hidden sm:block">{first_name}</span>
+				</Link>
 			)}
+			<button
+				onClick={handleLogout}
+				className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md p-3 text-sm font-semibold lg:flex-none lg:justify-start md:p-2 md:px-3 shadow hover:bg-green-500 text-[#2A3940] bg-emerald-100 hover:text-green-50 duration-200 ease-in-out">
+				<FaArrowRightFromBracket className="w-6" />
+				<span className="hidden sm:block">logout</span>
+			</button>
 		</>
 	);
 };

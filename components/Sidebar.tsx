@@ -9,6 +9,7 @@ const Sidebar = async () => {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
+	console.log("the logged in user is: ", user?.user_metadata.type);
 
 	return (
 		<>
@@ -20,7 +21,10 @@ const Sidebar = async () => {
 					<section className="flex grow flex-row justify-between space-x-2 lg:flex-col lg:space-x-0 lg:space-y-2">
 						<NavLinks type={user?.user_metadata.type} />
 						<div className="hidden h-auto w-full grow rounded-md bg-green-100 md:block shadow" />
-						<AuthLinks isLoggedIn={!!user} />
+						<AuthLinks
+							userType={user?.user_metadata.type}
+							first_name={user?.user_metadata.first_name}
+						/>
 					</section>
 				</aside>
 			</section>
