@@ -11,7 +11,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CreateUserSchema } from "@/lib/schemas/userSchema";
+import { CreateCustomerData, UserSchema } from "@/lib/schemas/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,16 +20,14 @@ import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FaRegUser } from "react-icons/fa6";
 import { RiAdminLine } from "react-icons/ri";
-import { z } from "zod";
 
-type CreateCustomerData = z.infer<typeof CreateUserSchema>;
 const CreateCustomerForm = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const { toast } = useToast();
 	const router = useRouter();
 	const form = useForm<CreateCustomerData>({
-		resolver: zodResolver(CreateUserSchema),
+		resolver: zodResolver(UserSchema),
 	});
 
 	const togglePasswordVisibility = () => setShowPassword(!showPassword);

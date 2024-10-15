@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const CreateUserSchema = z.object({
+export const UserSchema = z.object({
 	email: z
 		.string()
 		.email({ message: "Invalid email address. 'example@gmail.com'" }),
@@ -20,3 +20,7 @@ export const CreateUserSchema = z.object({
 		invalid_type_error: "Please choose the type of the customer!",
 	}),
 });
+export type CreateCustomerData = z.infer<typeof UserSchema>;
+
+export const UpdateCustomerSchema = UserSchema.omit({ password: true });
+export type UpdateCustomerData = z.infer<typeof UpdateCustomerSchema>;
