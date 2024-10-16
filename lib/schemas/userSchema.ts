@@ -24,3 +24,30 @@ export type CreateCustomerData = z.infer<typeof UserSchema>;
 
 export const UpdateCustomerSchema = UserSchema.omit({ password: true });
 export type UpdateCustomerData = z.infer<typeof UpdateCustomerSchema>;
+
+export const ChangePasswordSchema = z
+	.object({
+		old_password: z.string().min(1, { message: "Old password is required." }),
+		new_password: z
+			.string()
+			.min(8, { message: "Be at least 8 characters long" })
+			.regex(/[a-zA-Z]/, { message: "Contain at least one letter" })
+			.regex(/[0-9]/, { message: "Contain at least one number" })
+			.regex(/[^a-zA-Z0-9]/, {
+				message: "Contain at least one special character!",
+			}),
+		confirm_new_password: z
+			.string()
+			.min(1, { message: "Confirm new password is required." }),
+	})
+	.refine(
+		(data) => {
+			if (data.new_password !== data.confirm_new_password) {
+				return false;
+			}
+			return true;
+		},
+		{ message: "New password and confirm new password do not match!" },
+	);
+
+export type ChangePasswordData = z.infer<typeof ChangePasswordSchema>;

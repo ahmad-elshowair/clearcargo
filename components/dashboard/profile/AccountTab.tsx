@@ -21,6 +21,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+	ChangePasswordData,
+	ChangePasswordSchema,
 	UpdateCustomerData,
 	UpdateCustomerSchema,
 } from "@/lib/schemas/userSchema";
@@ -29,6 +31,10 @@ import { User } from "@supabase/supabase-js";
 
 import { FC } from "react";
 import { useForm } from "react-hook-form";
+import { FaBirthdayCake } from "react-icons/fa";
+import { FaSquarePhone } from "react-icons/fa6";
+import { MdAlternateEmail } from "react-icons/md";
+import { PiTextboxBold } from "react-icons/pi";
 import { RiLockPasswordFill } from "react-icons/ri";
 
 interface AccountTabProps {
@@ -46,6 +52,15 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 			surname: user?.user_metadata.surname,
 			date_of_birth: user?.user_metadata.date_of_birth,
 			mobile_number: user?.user_metadata.mobile_number,
+		},
+	});
+
+	const formSettings = useForm<ChangePasswordData>({
+		resolver: zodResolver(ChangePasswordSchema),
+		defaultValues: {
+			old_password: "",
+			new_password: "",
+			confirm_new_password: "",
 		},
 	});
 
@@ -86,11 +101,16 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 													First Name
 												</FormLabel>
 												<FormControl>
-													<Input
-														className="bg-white"
-														onChange={(e) => field.onChange(e.target.value)}
-														value={field.value}
-													/>
+													<div className="flex items-center border border-gray-200 rounded-lg">
+														<span className="p-2 bg-gray-200 rounded-l-lg">
+															<PiTextboxBold className=" h-[20px] w-[18px] text-green-700" />
+														</span>
+														<Input
+															className="bg-white border-none rounded-l-none"
+															onChange={(e) => field.onChange(e.target.value)}
+															value={field.value}
+														/>
+													</div>
 												</FormControl>
 												<FormMessage />
 											</FormItem>
@@ -106,11 +126,16 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 													Surname
 												</FormLabel>
 												<FormControl>
-													<Input
-														className="bg-white"
-														onChange={(e) => field.onChange(e.target.value)}
-														value={field.value}
-													/>
+													<div className="flex items-center border border-gray-200 rounded-lg">
+														<span className="p-2 bg-gray-200 rounded-l-lg">
+															<PiTextboxBold className=" h-[20px] w-[18px] text-green-700" />
+														</span>
+														<Input
+															className="bg-white border-none rounded-l-none"
+															onChange={(e) => field.onChange(e.target.value)}
+															value={field.value}
+														/>
+													</div>
 												</FormControl>
 												<FormMessage />
 											</FormItem>
@@ -127,16 +152,23 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 													Date of Birth
 												</FormLabel>
 												<FormControl>
-													<Input
-														type="date"
-														className="bg-white"
-														onChange={(e) =>
-															field.onChange(new Date(e.target.value))
-														}
-														value={
-															new Date(field.value).toISOString().split("T")[0]
-														}
-													/>
+													<div className="flex items-center border border-gray-200 rounded-lg">
+														<span className="p-2 bg-gray-200 rounded-l-lg">
+															<FaBirthdayCake className=" h-[20px] w-[18px] text-green-700" />
+														</span>
+														<Input
+															type="date"
+															className="bg-white border-none rounded-l-none"
+															onChange={(e) =>
+																field.onChange(new Date(e.target.value))
+															}
+															value={
+																new Date(field.value)
+																	.toISOString()
+																	.split("T")[0]
+															}
+														/>
+													</div>
 												</FormControl>
 												<FormMessage />
 											</FormItem>
@@ -152,11 +184,16 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 													Mobile Number
 												</FormLabel>
 												<FormControl>
-													<Input
-														className="bg-white"
-														onChange={(e) => field.onChange(e.target.value)}
-														value={field.value}
-													/>
+													<div className="flex items-center border border-gray-200 rounded-lg">
+														<span className="p-2 bg-gray-200 rounded-l-lg">
+															<FaSquarePhone className=" h-[20px] w-[18px] text-green-700" />
+														</span>
+														<Input
+															className="bg-white border-none rounded-l-none"
+															onChange={(e) => field.onChange(e.target.value)}
+															value={field.value}
+														/>
+													</div>
 												</FormControl>
 												<FormMessage />
 											</FormItem>
@@ -174,12 +211,17 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 													Email
 												</FormLabel>
 												<FormControl>
-													<Input
-														type="email"
-														className="bg-white"
-														onChange={(e) => field.onChange(e.target.value)}
-														value={field.value}
-													/>
+													<div className="flex items-center border border-gray-200 rounded-lg">
+														<span className="p-2 bg-gray-200 rounded-l-lg">
+															<MdAlternateEmail className=" h-[20px] w-[18px] text-green-700" />
+														</span>
+														<Input
+															type="email"
+															className="bg-white border-none rounded-l-none"
+															onChange={(e) => field.onChange(e.target.value)}
+															value={field.value}
+														/>
+													</div>
 												</FormControl>
 												<FormMessage />
 											</FormItem>
@@ -197,60 +239,108 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 				</Form>
 			</TabsContent>
 			<TabsContent value="account-settings">
-				<form action={onSubmitSettings}>
-					<Card className="bg-green-100">
-						<CardHeader className="mb-8">
-							<CardTitle>Password</CardTitle>
-							<CardDescription>
-								{`Change your password here. After saving, you'll be logged out.`}
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div className="mb-3">
-								<label
-									className="block mb-2 text-sm font-bold text-emerald-900"
-									htmlFor="old_password">
-									Old Password
-								</label>
-								<div className="relative">
-									<input
-										className="peer block w-full border border-emerald-200 pl-10 py-2 outline-2 text-sm placeholder:text-emerald-700 rounded-md"
-										type="password"
-										id="old_password"
+				<Form {...formSettings}>
+					<form action={onSubmitSettings}>
+						<Card className="bg-green-100">
+							<CardHeader className="mb-8">
+								<CardTitle>Password</CardTitle>
+								<CardDescription>
+									{`Change your password here. After saving, you'll be logged out.`}
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<div className="mb-3">
+									<FormField
+										control={formSettings.control}
 										name="old_password"
-										aria-describedby="old_password-error"
-										placeholder="***********"
+										render={({ field }) => (
+											<FormItem className="w-full">
+												<FormLabel className="text-green-800 md:font-bold">
+													Old Password
+												</FormLabel>
+												<FormControl>
+													<div className="flex items-center border border-gray-200 rounded-lg">
+														<span className="p-2 bg-gray-200 rounded-l-lg">
+															<RiLockPasswordFill className=" h-[20px] w-[18px] text-green-700" />
+														</span>
+														<Input
+															type="password"
+															placeholder="********"
+															className="bg-white border-none rounded-l-none"
+															onChange={(e) => field.onChange(e.target.value)}
+														/>
+													</div>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
 									/>
-									<RiLockPasswordFill className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-emerald-700" />
 								</div>
-							</div>
 
-							<div className="mb-2">
-								<label
-									className="block mb-2 text-sm font-bold text-emerald-900"
-									htmlFor="new_password">
-									New Password
-								</label>
-								<div className="relative">
-									<input
-										className="peer block w-full border border-emerald-200 pl-10 py-2 outline-2 text-sm placeholder:text-emerald-700 rounded-md"
-										type="password"
-										id="new_password"
+								<div className="mb-3">
+									<FormField
+										control={formSettings.control}
 										name="new_password"
-										aria-describedby="new_password-error"
-										placeholder="********"
+										render={({ field }) => (
+											<FormItem className="w-full">
+												<FormLabel className="text-green-800 md:font-bold">
+													New Password
+												</FormLabel>
+												<FormControl>
+													<div className="flex items-center border border-gray-200 rounded-lg">
+														<span className="p-2 bg-gray-200 rounded-l-lg">
+															<RiLockPasswordFill className=" h-[20px] w-[18px] text-green-700" />
+														</span>
+														<Input
+															type="password"
+															placeholder="********"
+															className="bg-white border-none rounded-l-none"
+															onChange={(e) => field.onChange(e.target.value)}
+														/>
+													</div>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
 									/>
-									<RiLockPasswordFill className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-emerald-700" />
 								</div>
-							</div>
-						</CardContent>
-						<CardFooter className="justify-end">
-							<Button className="bg-green-400 hover:bg-green-500 hover:font-bold">
-								Change password
-							</Button>
-						</CardFooter>
-					</Card>
-				</form>
+
+								<div className="mb-3">
+									<FormField
+										control={formSettings.control}
+										name="confirm_new_password"
+										render={({ field }) => (
+											<FormItem className="w-full">
+												<FormLabel className="text-green-800 md:font-bold">
+													Confirm New Password
+												</FormLabel>
+												<FormControl>
+													<div className="flex items-center border border-gray-200 rounded-lg">
+														<span className="p-2 bg-gray-200 rounded-l-lg">
+															<RiLockPasswordFill className=" h-[20px] w-[18px] text-green-700" />
+														</span>
+														<Input
+															type="password"
+															placeholder="********"
+															className="bg-white border-none rounded-l-none"
+															onChange={(e) => field.onChange(e.target.value)}
+														/>
+													</div>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+							</CardContent>
+							<CardFooter className="justify-end">
+								<Button className="bg-green-400 hover:bg-green-500 hover:font-bold">
+									Change password
+								</Button>
+							</CardFooter>
+						</Card>
+					</form>
+				</Form>
 			</TabsContent>
 		</Tabs>
 	);
