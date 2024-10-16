@@ -188,7 +188,7 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 								</div>
 							</CardContent>
 							<CardFooter className="justify-end">
-								<Button className="bg-green-500 hover:bg-green-700">
+								<Button className="bg-green-400 hover:bg-green-500 hover:font-bold">
 									Save changes
 								</Button>
 							</CardFooter>
@@ -199,14 +199,14 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 			<TabsContent value="account-settings">
 				<form action={onSubmitSettings}>
 					<Card className="bg-green-100">
-						<CardHeader>
+						<CardHeader className="mb-8">
 							<CardTitle>Password</CardTitle>
 							<CardDescription>
 								{`Change your password here. After saving, you'll be logged out.`}
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<div>
+							<div className="mb-3">
 								<label
 									className="block mb-2 text-sm font-bold text-emerald-900"
 									htmlFor="old_password">
@@ -245,7 +245,7 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 							</div>
 						</CardContent>
 						<CardFooter className="justify-end">
-							<Button className="bg-green-400 hover:bg-green-700">
+							<Button className="bg-green-400 hover:bg-green-500 hover:font-bold">
 								Change password
 							</Button>
 						</CardFooter>
