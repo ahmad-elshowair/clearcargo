@@ -9,7 +9,6 @@ const Sidebar = async () => {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
-	console.log("the logged in user is: ", user?.user_metadata.type);
 
 	return (
 		<>
