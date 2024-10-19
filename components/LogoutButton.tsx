@@ -1,50 +1,44 @@
 "use client";
 import { logout } from "@/actions/auth";
-import { useRouter } from "next/navigation";
+import { useToast } from "@/components/hooks/use-toast";
 import { Button } from "./ui/button";
 
 const LogoutButton = () => {
-	const router = useRouter();
+	const { toast } = useToast();
 
 	const handleLogout = async () => {
 		const result = await logout();
 
 		if (result.status === "success") {
-			alert(result.message);
-			// toast({
-			// 	title: <h1 className="font-extrabold text-lg">Logout Success</h1>,
-			// 	description: (
-			// 		<div className="bg-green-100 p-4 rounded-md w-[350px]">
-			// 			<p className="text-md font-bold text-green-500">{result.message}</p>
-			// 		</div>
-			// 	),
-			// 	duration: 5000,
-			// 	style: {
-			// 		background: "#2d393fab",
-			// 		color: "white",
-			// 		fontWeight: "800",
-			// 		border: "none",
-			// 	},
-			// });
-			router.refresh(); // Refresh the page to update the UI
+			toast({
+				title: (
+					<h1 className="font-extrabold text-lg text-green-800">
+						Logout Success
+					</h1>
+				),
+				description: (
+					<div className="bg-green-100 p-4 rounded-md w-[350px]">
+						<p className="text-md font-bold text-green-500">{result.message}</p>
+					</div>
+				),
+				duration: 5000,
+				className: "border-none bg-green-500/80",
+			});
 		} else {
 			console.error("Failed to log out:", result.message);
-			alert(result.message);
-			// toast({
-			// 	title: <h1 className="font-extrabold text-lg">Logout Error</h1>,
-			// 	description: (
-			// 		<div className="bg-red-100 p-4 rounded-md w-[350px]">
-			// 			<p className="text-md font-bold text-red-500">{result.message}</p>
-			// 		</div>
-			// 	),
-			// 	duration: 5000,
-			// 	style: {
-			// 		background: "#cea9a9",
-			// 		color: "white",
-			// 		border: "none",
-			// 		fontWeight: "800",
-			// 	},
-			// });
+
+			toast({
+				title: (
+					<h1 className="font-extrabold text-lg text-red-800">Logout Error</h1>
+				),
+				description: (
+					<div className="bg-red-100 p-4 rounded-md w-[350px]">
+						<p className="text-md font-bold text-red-500">{result.message}</p>
+					</div>
+				),
+				duration: 5000,
+				className: "border-none bg-red-500/80",
+			});
 		}
 	};
 	return (

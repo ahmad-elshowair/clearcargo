@@ -46,14 +46,31 @@ export const LoginForm = () => {
 
 			if (result.status === "error") {
 				toast({
-					title: "Login",
-					description: result.message,
-					variant: "destructive",
+					title: (
+						<h1 className="font-extrabold text-lg text-white">LOGIN ERROR</h1>
+					),
+					description: (
+						<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500/50">
+							<p className="text-md font-bold text-red-500">{result.message}</p>
+						</div>
+					),
+					duration: 5000,
+					className: "border-none bg-red-500/80",
 				});
 			} else {
 				toast({
-					title: "Login",
-					description: result.message,
+					title: (
+						<h1 className="font-extrabold text-lg text-white">LOGIN SUCCESS</h1>
+					),
+					description: (
+						<div className="bg-green-100 p-4 rounded-md w-[350px] shadow shadow-green-500/50">
+							<p className="text-md font-bold text-green-500">
+								{result.message}
+							</p>
+						</div>
+					),
+					duration: 5000,
+					className: "border-none bg-green-500/80",
 				});
 				router.push("/dashboard/clearances");
 			}

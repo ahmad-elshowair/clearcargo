@@ -34,9 +34,18 @@ const ResetPasswordForm = () => {
 		setLoading(true);
 		if (!code) {
 			toast({
-				title: "RESET PASSWORD",
-				description: "MISSING CODE. PLEASE TRY AGAIN.",
-				variant: "destructive",
+				title: (
+					<h1 className="font-extrabold text-lg text-red-800">
+						RESET PASSWORD ERROR
+					</h1>
+				),
+				description: (
+					<div className="bg-red-100 p-4 rounded-md w-[350px]">
+						<p className="text-md font-bold text-red-500">Missing Code</p>
+					</div>
+				),
+				duration: 5000,
+				className: "border-none bg-red-500/80",
 			});
 			return;
 		}
@@ -50,22 +59,54 @@ const ResetPasswordForm = () => {
 			if (result.status === "error") {
 				console.error("ERROR RESET PASSWORD FORM: ", result.message);
 				toast({
-					title: "RESET PASSWORD",
-					description: result.message,
-					variant: "destructive",
+					title: (
+						<h1 className="font-extrabold text-lg text-red-800">
+							RESET PASSWORD ERROR
+						</h1>
+					),
+					description: (
+						<div className="bg-red-100 p-4 rounded-md w-[350px]">
+							<p className="text-md font-bold text-red-500">{result.message}</p>
+						</div>
+					),
+					duration: 5000,
+					className: "border-none bg-red-500/80",
 				});
 			} else {
 				toast({
-					title: "RESET PASSWORD",
-					description: result.message,
+					title: (
+						<h1 className="font-extrabold text-lg text-green-800">
+							RESET PASSWORD SUCCESS
+						</h1>
+					),
+					description: (
+						<div className="bg-green-100 p-4 rounded-md w-[350px]">
+							<p className="text-md font-bold text-green-500">
+								{result.message}
+							</p>
+						</div>
+					),
+					duration: 5000,
+					className: "border-none bg-green-500/80",
 				});
 			}
 		} catch (error) {
 			console.error(error);
 			toast({
-				title: "RESET PASSWORD",
-				description: (error as Error).message,
-				variant: "destructive",
+				title: (
+					<h1 className="font-extrabold text-lg text-red-800">
+						RESET PASSWORD ERROR
+					</h1>
+				),
+				description: (
+					<div className="bg-red-100 p-4 rounded-md w-[350px]">
+						<p className="text-md font-bold text-red-500">
+							{(error as Error).message}
+						</p>
+					</div>
+				),
+				duration: 5000,
+				className: "border-none bg-red-500/80",
 			});
 		} finally {
 			setLoading(false);
