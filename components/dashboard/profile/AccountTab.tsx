@@ -1,5 +1,7 @@
 "use client";
 
+import { updateCustomerInfo } from "@/actions/customer";
+import { useToast } from "@/components/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -29,7 +31,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User } from "@supabase/supabase-js";
 
-import { FC } from "react";
+import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaBirthdayCake } from "react-icons/fa";
 import { FaSquarePhone } from "react-icons/fa6";
@@ -42,16 +45,18 @@ interface AccountTabProps {
 }
 
 const AccountTab: FC<AccountTabProps> = ({ user }) => {
-	// const router = useRouter();
+	const router = useRouter();
+	const { toast } = useToast();
+	const [isPending, setIsPending] = useState(false);
 
 	const formInfo = useForm<UpdateCustomerData>({
 		resolver: zodResolver(UpdateCustomerSchema),
 		defaultValues: {
-			email: user?.email,
-			first_name: user?.user_metadata.first_name,
-			surname: user?.user_metadata.surname,
-			date_of_birth: user?.user_metadata.date_of_birth,
-			mobile_number: user?.user_metadata.mobile_number,
+			email: user?.email || "",
+			first_name: user?.user_metadata.first_name || "",
+			surname: user?.user_metadata.surname || "",
+			date_of_birth: user?.user_metadata.date_of_birth || "",
+			mobile_number: user?.user_metadata.mobile_number || "",
 		},
 	});
 
@@ -64,8 +69,94 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 		},
 	});
 
-	const onSubmitInformation = async () => {};
-	const onSubmitSettings = async () => {};
+	const onSubmitInformation = async (data: UpdateCustomerData) => {
+		setIsPending(true);
+		try {
+			const formData = new FormData();
+			// SET THE FIELDS OF THE FORM DATA.
+			Object.entries(data).forEach(([key, value]) => {
+				formData.append(key, value?.toString() || "");
+			});
+
+			// UPDATE THE USER IN SUPABASE.
+			const result = await updateCustomerInfo(formData);
+
+			// CHECK IF THE UPDATE WAS NOT SUCCESSFUL.
+			if (result.status === "error") {
+				toast({
+					title: (
+						<h1 className="font-extrabold text-lg">
+							Update customer information
+						</h1>
+					),
+					description: (
+						<div className="flex flex-col items-start gap-2 w-[350px] bg-red-100 p-4 rounded-md">
+							<p className="text-red-800 font-semibold">{result.message}</p>
+						</div>
+					),
+					duration: 5000,
+					style: {
+						background: "#cea9a9",
+						color: "white",
+						border: "none",
+						fontWeight: "800",
+					},
+				});
+			} else {
+				toast({
+					title: (
+						<h1 className="font-extrabold text-lg">
+							Update customer information
+						</h1>
+					),
+					description: (
+						<div className="bg-green-100 p-4 rounded-md w-[350px]">
+							<p className="text-md font-bold text-green-500">
+								{result.message}
+							</p>
+						</div>
+					),
+					duration: 5000,
+					style: {
+						background: "#2d393fab",
+						color: "white",
+						fontWeight: "800",
+						border: "none",
+					},
+				});
+				router.refresh();
+			}
+		} catch (error) {
+			console.error("Error updating customer information: ", error);
+			toast({
+				title: (
+					<h1 className="font-extrabold text-lg">
+						Update customer information
+					</h1>
+				),
+				description: (
+					<div className="flex flex-col items-start gap-2 w-[350px] bg-red-100 p-4 rounded-md">
+						<p className="text-red-800 font-semibold">
+							{(error as Error).message}
+						</p>
+					</div>
+				),
+				duration: 5000,
+				style: {
+					background: "#cea9a9",
+					color: "white",
+					border: "none",
+					fontWeight: "800",
+				},
+			});
+		} finally {
+			setIsPending(false);
+		}
+	};
+
+	const onSubmitSettings = async (data: ChangePasswordData) => {
+		console.log("onSubmitSettings called with data:", data); // Debug log
+	};
 	return (
 		<Tabs defaultValue="personal-info" className="w-ful">
 			<TabsList className="flex w-full bg-green-100">
@@ -82,12 +173,13 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 			</TabsList>
 			<TabsContent value="personal-info">
 				<Form {...formInfo}>
-					<form action={onSubmitInformation}>
+					<form onSubmit={formInfo.handleSubmit(onSubmitInformation)}>
 						<Card className="bg-green-100">
 							<CardHeader className="mb-8">
 								<CardTitle>Personal Information</CardTitle>
 								<CardDescription>
-									{`Make changes to your personal information here. Click save when you're done.`}
+									Make changes to your personal information here. Click save
+									when you are done.
 								</CardDescription>
 							</CardHeader>
 							<CardContent>
@@ -106,9 +198,8 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 															<PiTextboxBold className=" h-[20px] w-[18px] text-green-700" />
 														</span>
 														<Input
+															{...field}
 															className="bg-white border-none rounded-l-none"
-															onChange={(e) => field.onChange(e.target.value)}
-															value={field.value}
 														/>
 													</div>
 												</FormControl>
@@ -131,9 +222,8 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 															<PiTextboxBold className=" h-[20px] w-[18px] text-green-700" />
 														</span>
 														<Input
+															{...field}
 															className="bg-white border-none rounded-l-none"
-															onChange={(e) => field.onChange(e.target.value)}
-															value={field.value}
 														/>
 													</div>
 												</FormControl>
@@ -157,16 +247,9 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 															<FaBirthdayCake className=" h-[20px] w-[18px] text-green-700" />
 														</span>
 														<Input
+															{...field}
 															type="date"
 															className="bg-white border-none rounded-l-none"
-															onChange={(e) =>
-																field.onChange(new Date(e.target.value))
-															}
-															value={
-																new Date(field.value)
-																	.toISOString()
-																	.split("T")[0]
-															}
 														/>
 													</div>
 												</FormControl>
@@ -189,9 +272,8 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 															<FaSquarePhone className=" h-[20px] w-[18px] text-green-700" />
 														</span>
 														<Input
+															{...field}
 															className="bg-white border-none rounded-l-none"
-															onChange={(e) => field.onChange(e.target.value)}
-															value={field.value}
 														/>
 													</div>
 												</FormControl>
@@ -216,10 +298,9 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 															<MdAlternateEmail className=" h-[20px] w-[18px] text-green-700" />
 														</span>
 														<Input
+															{...field}
 															type="email"
 															className="bg-white border-none rounded-l-none"
-															onChange={(e) => field.onChange(e.target.value)}
-															value={field.value}
 														/>
 													</div>
 												</FormControl>
@@ -230,8 +311,11 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 								</div>
 							</CardContent>
 							<CardFooter className="justify-end">
-								<Button className="bg-green-400 hover:bg-green-500 hover:font-bold">
-									Save changes
+								<Button
+									className="bg-green-400 hover:bg-green-500 hover:font-bold"
+									type="submit"
+									disabled={isPending}>
+									{isPending ? "Saving..." : "Save changes"}
 								</Button>
 							</CardFooter>
 						</Card>
@@ -240,7 +324,7 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 			</TabsContent>
 			<TabsContent value="account-settings">
 				<Form {...formSettings}>
-					<form action={onSubmitSettings}>
+					<form onSubmit={formSettings.handleSubmit(onSubmitSettings)}>
 						<Card className="bg-green-100">
 							<CardHeader className="mb-8">
 								<CardTitle>Password</CardTitle>
@@ -264,6 +348,7 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 															<RiLockPasswordFill className=" h-[20px] w-[18px] text-green-700" />
 														</span>
 														<Input
+															{...field}
 															type="password"
 															placeholder="********"
 															className="bg-white border-none rounded-l-none"
@@ -292,6 +377,7 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 															<RiLockPasswordFill className=" h-[20px] w-[18px] text-green-700" />
 														</span>
 														<Input
+															{...field}
 															type="password"
 															placeholder="********"
 															className="bg-white border-none rounded-l-none"
@@ -320,6 +406,7 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 															<RiLockPasswordFill className=" h-[20px] w-[18px] text-green-700" />
 														</span>
 														<Input
+															{...field}
 															type="password"
 															placeholder="********"
 															className="bg-white border-none rounded-l-none"

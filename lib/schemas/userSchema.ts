@@ -20,9 +20,14 @@ export const UserSchema = z.object({
 		invalid_type_error: "Please choose the type of the customer!",
 	}),
 });
+
 export type CreateCustomerData = z.infer<typeof UserSchema>;
 
-export const UpdateCustomerSchema = UserSchema.omit({ password: true });
+// Omit 'password' and 'type' for updating customer information
+export const UpdateCustomerSchema = UserSchema.omit({
+	password: true,
+	type: true,
+});
 export type UpdateCustomerData = z.infer<typeof UpdateCustomerSchema>;
 
 export const ChangePasswordSchema = z

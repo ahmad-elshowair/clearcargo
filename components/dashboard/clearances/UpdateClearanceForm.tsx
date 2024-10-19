@@ -142,7 +142,6 @@ export const UpdateClearanceForm: FC<UpdateClearanceFormProps> = ({
 			setIsSubmitting(false);
 		}
 	};
-
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="pb-10 md:p-0">

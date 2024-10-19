@@ -175,7 +175,7 @@ const ClearancesList = ({
 						</table>
 					) : (
 						<section className="w-full justify-center items-center hidden lg:flex">
-							<p className="text-4xl text-red-100 border rounded-md p-4 bg-red-200">
+							<p className="text-3xl text-red-100 border rounded-md p-4 bg-red-200 w-full text-center">
 								No Clearances Found or you have not yet added any clearances.
 							</p>
 						</section>

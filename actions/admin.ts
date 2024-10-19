@@ -87,8 +87,6 @@ export const fetchAllAdmins = async (): Promise<TAdminResult> => {
 			};
 		}
 
-		console.log("FETCHING ALL CUSTOMERS:", admins);
-
 		return {
 			status: "success",
 			data: admins,
