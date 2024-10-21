@@ -43,18 +43,38 @@ const CreateCustomerForm = () => {
 			const result = await createCustomer(formData);
 			if (result.status === "error") {
 				toast({
-					title: "CREATING CUSTOMER FAILED",
-					description: result.message,
-					variant: "destructive",
+					title: (
+						<h1 className="font-extrabold text-lg text-red-800">
+							CREATE CUSTOMER FAILED
+						</h1>
+					),
+					description: (
+						<div className="bg-red-100 p-4 rounded-md w-[350px]">
+							<p className="text-md font-bold text-red-500">{result.message}</p>
+						</div>
+					),
+					duration: 5000,
+					className: "border-none bg-red-500/80",
 				});
 			} else {
 				toast({
-					title: "Create customer",
-					description: result.message,
+					title: (
+						<h1 className="font-extrabold text-lg text-green-800">
+							CREATE CUSTOMER SUCCESS
+						</h1>
+					),
+					description: (
+						<div className="bg-green-100 p-4 rounded-md w-[350px]">
+							<p className="text-md font-bold text-green-500">
+								{result.message}
+							</p>
+						</div>
+					),
+					duration: 5000,
+					className: "border-none bg-green-500/80",
 				});
 
 				router.push("/dashboard/customers");
-				router.refresh();
 			}
 		} catch (error) {
 			console.error(`Error creating customer: ${error}`);

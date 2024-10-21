@@ -78,49 +78,87 @@ export const fetchCustomerByEmail = async (
 	}
 };
 
+interface IMetaData {
+	first_name?: string;
+	surname?: string;
+	mobile_number?: string;
+	date_of_birth?: string;
+}
+interface IUpdatedUser {
+	email?: string;
+	data?: IMetaData;
+}
 // UPDATE THE USER INFO
-export async function updateCustomerInfo(formData: FormData) {
-	
+export const updateCustomerInfo = async (formData: FormData) => {
 	const supabase = await createSupabaseServerClient();
- 
+
 	const {
 		data: { user },
 		error: userError,
 	} = await supabase.auth.getUser();
 	if (userError || !user) {
 		console.error("ERROR GETTING USER:", userError?.message);
-		return { status: "error", message: userError?.message };
+		return {
+			status: "error",
+			message: userError?.message || "FAILED TO AUTHENTICATE USER",
+		};
 	}
 
-	const customerInfo = {
-		email: formData.get("email") as string,
-		first_name: formData.get("first_name") as string,
-		surname: formData.get("surname") as string,
-		mobile_number: formData.get("mobile_number") as string,
-		date_of_birth: formData.get("date_of_birth") as string,
-	};
+	const updatedFields: { [key: string]: string } = {};
+	const metadataFields: { [key: string]: string } = {};
+
+	// CHECK WHICH FIELDS HAVE CHANGED.
+	for (const [key, value] of formData.entries()) {
+		const strValue = value as string;
+		if (key === "email" && user.email !== strValue) {
+			updatedFields.email = strValue;
+		} else if (
+			["first_name", "surname", "mobile_number", "date_of_birth"].includes(key)
+		) {
+			if (strValue !== user.user_metadata[key]) {
+				metadataFields[key] = strValue;
+			}
+		}
+	}
+
+	// ONLY UPDATE IF THERE ARE CHANGES.
+	if (
+		Object.keys(updatedFields).length === 0 &&
+		Object.keys(metadataFields).length === 0
+	) {
+		return { status: "success", message: "No Changes detected!" };
+	}
+
 	try {
+		const updatedData: IUpdatedUser = {};
+		if (Object.keys(updatedFields).length > 0) {
+			updatedData.email = updatedFields.email;
+		}
+		if (Object.keys(metadataFields).length > 0) {
+			updatedData.data = metadataFields;
+		}
+
 		// UPDATE THE USER INFO AND METADATA.
-		const { data, error: updateError } = await supabase.auth.updateUser({
-			email: customerInfo.email,
-			data: {
-				first_name: customerInfo.first_name,
-				surname: customerInfo.surname,
-				mobile_number: customerInfo.mobile_number,
-				date_of_birth: new Date(customerInfo.date_of_birth).toISOString(),
-			},
-		});
+		const { error: updateError } = await supabase.auth.updateUser(updatedData);
 
 		if (updateError) {
 			console.error("ERROR UPDATING USER INFO:", updateError.message);
+			if (
+				updateError.message.includes("cannot be used as it is not authorized")
+			) {
+				return {
+					status: "error",
+					message:
+						"This email domain is not authorized. Please use an authorized email domain or contact the administrator.",
+				};
+			}
 			return { status: "error", message: updateError.message };
 		}
 
-		console.log("User updated successfully:", data); // Debug log
 		revalidatePath("/dashboard/profile");
-		return { status: "success", message: "USER INFO UPDATED SUCCESSFULLY" };
+		return { status: "success", message: "CUSTOMER INFO UPDATED SUCCESSFULLY" };
 	} catch (error) {
 		console.error("ERROR UPDATING USER INFO:", (error as Error).message);
 		return { status: "error", message: (error as Error).message };
 	}
-}
+};

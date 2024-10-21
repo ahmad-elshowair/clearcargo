@@ -85,28 +85,23 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 			if (result.status === "error") {
 				toast({
 					title: (
-						<h1 className="font-extrabold text-lg">
-							Update customer information
+						<h1 className="font-extrabold text-lg text-red-800">
+							UPDATE PROFILE FAILED
 						</h1>
 					),
 					description: (
-						<div className="flex flex-col items-start gap-2 w-[350px] bg-red-100 p-4 rounded-md">
-							<p className="text-red-800 font-semibold">{result.message}</p>
+						<div className="bg-red-100 p-4 rounded-md w-[350px]">
+							<p className="text-md font-bold text-red-500">{result.message}</p>
 						</div>
 					),
 					duration: 5000,
-					style: {
-						background: "#cea9a9",
-						color: "white",
-						border: "none",
-						fontWeight: "800",
-					},
+					className: "border-none bg-red-500/80",
 				});
 			} else {
 				toast({
 					title: (
-						<h1 className="font-extrabold text-lg">
-							Update customer information
+						<h1 className="font-extrabold text-lg text-green-800">
+							UPDATE PROFILE SUCCESSFUL
 						</h1>
 					),
 					description: (
@@ -117,12 +112,7 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 						</div>
 					),
 					duration: 5000,
-					style: {
-						background: "#2d393fab",
-						color: "white",
-						fontWeight: "800",
-						border: "none",
-					},
+					className: "border-none bg-green-500/80",
 				});
 				router.refresh();
 			}

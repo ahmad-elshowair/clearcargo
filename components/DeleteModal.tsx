@@ -35,10 +35,20 @@ const DeleteModal = ({
 		if (!id) {
 			console.error("No ID provided for delete");
 			toast({
-				title: "Deleting Clearance",
-				description: "No ID provided for delete",
-				variant: "destructive",
-				duration: 3000,
+				title: (
+					<h1 className="font-extrabold text-lg text-red-800">
+						DELETE CUSTOMER ERROR
+					</h1>
+				),
+				description: (
+					<div className="bg-red-100 p-4 rounded-md w-[350px]">
+						<p className="text-md font-bold text-red-500">
+							No ID provided for delete
+						</p>
+					</div>
+				),
+				duration: 5000,
+				className: "border-none bg-red-500/80",
 			});
 			return;
 		}
@@ -51,23 +61,37 @@ const DeleteModal = ({
 				if (deleteResult.status === "error") {
 					console.error("ERROR DELETING CLEARANCE", deleteResult.message);
 					toast({
-						title: "Deleting Clearance",
+						title: (
+							<h1 className="font-extrabold text-lg text-red-800">
+								DELETE CUSTOMER ERROR
+							</h1>
+						),
 						description: (
-							<div className="flex justify-center items-center bg-red-500 text-red-50 p-4 rounded-md w-[350px]">
-								<p className="text-md font-bold">{deleteResult.message}</p>
+							<div className="bg-red-100 p-4 rounded-md w-[350px]">
+								<p className="text-md font-bold text-red-500">
+									{deleteResult.message}
+								</p>
 							</div>
 						),
-						duration: 3000,
+						duration: 5000,
+						className: "border-none bg-red-500/80",
 					});
 				} else {
 					toast({
-						title: "Deleting Clearance",
+						title: (
+							<h1 className="font-extrabold text-lg text-green-800">
+								DELETE CLEARANCE SUCCESS
+							</h1>
+						),
 						description: (
-							<div className="flex justify-center items-center bg-green-500 text-green-50 p-4 rounded-md w-[350px]">
-								<p className="text-md font-bold">{deleteResult.message}</p>
+							<div className="bg-green-100 p-4 rounded-md w-[350px]">
+								<p className="text-md font-bold text-green-500">
+									{deleteResult.message}
+								</p>
 							</div>
 						),
-						duration: 3000,
+						duration: 5000,
+						className: "border-none bg-green-500/80",
 					});
 					setIsOpen(false);
 				}
@@ -76,24 +100,39 @@ const DeleteModal = ({
 				const deleteResult = await deleteCustomer(id);
 				if (deleteResult.status === "error") {
 					console.error("ERROR DELETING CUSTOMER", deleteResult.message);
+
 					toast({
-						title: "Deleting Customer",
+						title: (
+							<h1 className="font-extrabold text-lg text-red-800">
+								DELETE CUSTOMER ERROR
+							</h1>
+						),
 						description: (
-							<div className="flex justify-center items-center bg-red-500 text-red-50 p-4 rounded-md w-[350px]">
-								<p className="text-md font-bold">{deleteResult.message}</p>
+							<div className="bg-red-100 p-4 rounded-md w-[350px]">
+								<p className="text-md font-bold text-red-500">
+									{deleteResult.message}
+								</p>
 							</div>
 						),
-						duration: 3000,
+						duration: 5000,
+						className: "border-none bg-red-500/80",
 					});
 				} else {
 					toast({
-						title: "Deleting Customer",
+						title: (
+							<h1 className="font-extrabold text-lg text-green-800">
+								DELETE CUSTOMER SUCCESS
+							</h1>
+						),
 						description: (
-							<div className="flex justify-center items-center bg-green-500 text-green-50 p-4 rounded-md w-[350px]">
-								<p className="text-md font-bold">{deleteResult.message}</p>
+							<div className="bg-green-100 p-4 rounded-md w-[350px]">
+								<p className="text-md font-bold text-green-500">
+									{deleteResult.message}
+								</p>
 							</div>
 						),
-						duration: 3000,
+						duration: 5000,
+						className: "border-none bg-green-500/80",
 					});
 					setIsOpen(false);
 				}
