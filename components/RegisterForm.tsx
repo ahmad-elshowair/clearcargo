@@ -19,6 +19,7 @@ import { registerSchema } from "@/lib/schemas/authSchema";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { z } from "zod";
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -27,6 +28,9 @@ export default function RegisterForm() {
 	const [loading, setLoading] = useState(false);
 	const { toast } = useToast();
 	const router = useRouter();
+	const [showPassword, setShowPassword] = useState(false);
+	const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
 	const form = useForm<RegisterFormData>({
 		resolver: zodResolver(registerSchema),
 		defaultValues: {
@@ -153,12 +157,24 @@ export default function RegisterForm() {
 										Password
 									</FormLabel>
 									<FormControl>
-										<Input
-											type="password"
-											placeholder="**********"
-											{...field}
-											className="bg-green-200 placeholder:text-xs placeholder:md:text-sm"
-										/>
+										<div className="relative">
+											<Input
+												type={showPassword ? "text" : "password"}
+												placeholder="**********"
+												{...field}
+												className="bg-green-200 placeholder:text-xs placeholder:md:text-sm"
+											/>
+											<button
+												type="button"
+												className="absolute inset-y-0 right-0 pr-3 flex items-center"
+												onClick={togglePasswordVisibility}>
+												{showPassword ? (
+													<FaEyeSlash className="h-5 w-5 text-gray-500" />
+												) : (
+													<FaEye className="h-5 w-5 text-gray-500" />
+												)}
+											</button>
+										</div>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
