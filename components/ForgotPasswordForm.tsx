@@ -38,21 +38,44 @@ const ForgotPasswordForm = () => {
 			const result = await forgotPassword(formData);
 			if (result.status === "error") {
 				toast({
-					title: "Forgot Password",
-					description: result.message,
-					variant: "destructive",
+					title: "FORGOT PASSWORD ERROR",
+					description: (
+						<div className="bg-red-100 p-4 rounded-md w-[350px] shadow shadow-red-500">
+							<p className="text-md font-bold text-red-500">{result.message}</p>
+						</div>
+					),
+					duration: 5000,
+					className:
+						"border-none bg-red-500/80 text-lg text-white font-extrabold",
 				});
 			} else {
 				toast({
-					title: "Forgot Password",
-					description: result.message,
+					title: "FORGOT PASSWORD",
+					description: (
+						<div className="bg-green-100 p-4 rounded-md w-[350px] shadow shadow-green-500">
+							<p className="text-md font-bold text-green-500">
+								{result.message}
+							</p>
+						</div>
+					),
+					duration: 5000,
+					className:
+						"border-none bg-green-500/80 text-lg text-white font-extrabold",
 				});
 			}
 		} catch (error) {
 			toast({
-				title: "Error",
-				description: (error as Error).message,
-				variant: "destructive",
+				title: "FORGOT PASSWORD ERROR",
+				description: (
+					<div className="bg-red-100 p-4 rounded-md w-[350px] shadow shadow-red-500">
+						<p className="text-md font-bold text-red-500">
+							{(error as Error).message}
+						</p>
+					</div>
+				),
+				duration: 5000,
+				className:
+					"border-none bg-red-500/80 text-lg text-white font-extrabold",
 			});
 		} finally {
 			setLoading(false);

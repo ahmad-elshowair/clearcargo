@@ -46,22 +46,19 @@ export const LoginForm = () => {
 
 			if (result.status === "error") {
 				toast({
-					title: (
-						<h1 className="font-extrabold text-lg text-white">LOGIN ERROR</h1>
-					),
+					title: "LOGIN ERROR",
 					description: (
 						<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500/50">
 							<p className="text-md font-bold text-red-500">{result.message}</p>
 						</div>
 					),
 					duration: 5000,
-					className: "border-none bg-red-500/80",
+					className:
+						"border-none bg-red-500/80 font-extrabold text-lg text-white",
 				});
 			} else {
 				toast({
-					title: (
-						<h1 className="font-extrabold text-lg text-white">LOGIN SUCCESS</h1>
-					),
+					title: "LOGIN SUCCESS",
 					description: (
 						<div className="bg-green-100 p-4 rounded-md w-[350px] shadow shadow-green-500/50">
 							<p className="text-md font-bold text-green-500">
@@ -70,17 +67,25 @@ export const LoginForm = () => {
 						</div>
 					),
 					duration: 5000,
-					className: "border-none bg-green-500/80",
+					className:
+						"border-none bg-green-500/80 text-lg text-white font-extrabold",
 				});
 				router.push("/dashboard/clearances");
 			}
 		} catch (error) {
 			console.error("Error while logging in", error);
-
 			toast({
-				title: "Login",
-				description: `ERROR WHILE LOGGING IN: ${error}`,
-				variant: "destructive",
+				title: "LOGIN ERROR",
+				description: (
+					<div className="bg-red-100 p-4 rounded-md w-[350px] shadow shadow-red-500">
+						<p className="text-md font-bold text-red-500">
+							{(error as Error).message}
+						</p>
+					</div>
+				),
+				duration: 5000,
+				className:
+					"border-none bg-red-500/80 text-lg text-white font-extrabold",
 			});
 		} finally {
 			setIsLoading(false);

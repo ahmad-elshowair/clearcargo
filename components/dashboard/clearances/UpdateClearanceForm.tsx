@@ -75,14 +75,17 @@ export const UpdateClearanceForm: FC<UpdateClearanceFormProps> = ({
 			// ENSURE clearance_id IS AVAILABLE AND APPEND IT TO THE formData OBJECT
 			if (!clearance?.id) {
 				toast({
-					title: "Update a Clearance",
+					title: "UPDATE CLEARANCE ERROR",
 					description: (
-						<div className="p-2 bg-red-200 text-red-800 rounded-md w-[350px]">
-							<p>Clearance ID is missing. Unable to update.</p>
+						<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
+							<p className="text-md font-bold text-red-500">
+								Clearance ID is missing. Unable to update.
+							</p>
 						</div>
 					),
-
 					duration: 5000,
+					className:
+						"border-none bg-red-500/80 font-extrabold text-lg text-red-800",
 				});
 				setIsSubmitting(false);
 				return;
@@ -106,37 +109,50 @@ export const UpdateClearanceForm: FC<UpdateClearanceFormProps> = ({
 			if (result.status === "error") {
 				console.error("ERROR IN CLEARANCE UPDATE", result.message);
 				toast({
-					title: "Update of Clearance",
+					title: "UPDATE CLEARANCE ERROR",
 					description: (
-						<div className="p-2 bg-red-100 text-red-800 rounded-md w-[350px]">
-							<p>{result.message}</p>
+						<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
+							<p className="text-md font-bold text-red-500">{result.message}</p>
 						</div>
 					),
 					duration: 5000,
+					className:
+						"border-none bg-red-500/80 font-extrabold text-lg text-red-800",
 				});
 			} else {
-				// IF THERE IS NO ERROR, SHOW A SUCCESS MESSAGE, REDIRECT TO THE CLEARANCES PAGE
+				// IF THERE IS NO ERROR, SHOW A SUCCESS MESSAGE, REDIRECT TO THE CLEARANCES PAGE.
+
 				toast({
-					title: "Update a Clearance",
+					title: "UPDATE CLEARANCE SUCCESS",
 					description: (
-						<div className="p-2 bg-green-100 text-green-800 rounded-md w-[350px]">
-							<p>{result.message}</p>
+						<div className="bg-green-100 p-4 rounded-md w-[350px] shadow shadow-green-500">
+							<p className="text-md font-bold text-green-500">
+								{result.message}
+							</p>
 						</div>
 					),
 					duration: 5000,
+					className:
+						"border-none bg-green-500/80 font-extrabold text-lg text-green-800",
 				});
 				router.push("/dashboard/all-clearances");
 			}
 		} catch (error) {
 			console.error("ERROR IN FORM UPDATE", error);
+
+			
 			toast({
-				title: "Error in form update",
+				title: "UPDATE CLEARANCE ERROR",
 				description: (
-					<div className="p-2 bg-red-100 text-red-800 rounded-md w-[350px]">
-						<p>{(error as Error).message}</p>
+					<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
+						<p className="text-md font-bold text-red-500">
+							{(error as Error).message}
+						</p>
 					</div>
 				),
 				duration: 5000,
+				className:
+					"border-none bg-red-500/80 font-extrabold text-lg text-red-800",
 			});
 		} finally {
 			setIsSubmitting(false);

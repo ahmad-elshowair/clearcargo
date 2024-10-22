@@ -55,23 +55,46 @@ export default function RegisterForm() {
 
 			if (result.status == "error") {
 				toast({
-					title: "Registration",
-					description: result.message,
-					variant: "destructive",
+					title: "REGISTRATION ERROR",
+					description: (
+						<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500/50">
+							<p className="text-md font-bold text-red-500">{result.message}</p>
+						</div>
+					),
+					duration: 5000,
+					className:
+						"border-none bg-red-500/80 font-extrabold text-lg text-white",
 				});
 			} else {
 				toast({
-					title: "Registration",
-					description: result.message,
+					title: "REGISTRATION SUCCESS",
+					description: (
+						<div className="bg-green-100 p-4 rounded-md w-[360px] shadow shadow-green-500">
+							<p className="text-md font-bold text-green-500">
+								{result.message}
+							</p>
+						</div>
+					),
+					duration: 5000,
+					className:
+						"border-none bg-green-500/80 font-extrabold text-lg text-white",
 				});
 				router.push("/login");
 			}
 		} catch (error) {
-			console.error("Error while registering", error);
+			console.error("ERROR WHILE REGISTERING:", error);
 			toast({
-				title: "Registration",
-				description: `ERROR WHILE REGISTERING: ${error}`,
-				variant: "destructive",
+				title: "REGISTRATION ERROR",
+				description: (
+					<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500/50">
+						<p className="text-md font-bold text-red-500">
+							ERROR WHILE REGISTERING: {(error as Error).message}
+						</p>
+					</div>
+				),
+				duration: 5000,
+				className:
+					"border-none bg-red-500/80 font-extrabold text-lg text-white",
 			});
 		} finally {
 			setLoading(false);

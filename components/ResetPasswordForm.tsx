@@ -34,19 +34,17 @@ const ResetPasswordForm = () => {
 		setLoading(true);
 		if (!code) {
 			toast({
-				title: (
-					<h1 className="font-extrabold text-lg text-red-800">
-						RESET PASSWORD ERROR
-					</h1>
-				),
+				title: "RESET PASSWORD ERROR",
 				description: (
-					<div className="bg-red-100 p-4 rounded-md w-[350px]">
+					<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
 						<p className="text-md font-bold text-red-500">Missing Code</p>
 					</div>
 				),
 				duration: 5000,
-				className: "border-none bg-red-500/80",
+				className:
+					"border-none bg-red-500/80 font-extrabold text-lg text-white",
 			});
+
 			return;
 		}
 
@@ -58,55 +56,48 @@ const ResetPasswordForm = () => {
 			const result = await resetPassword(formData);
 			if (result.status === "error") {
 				console.error("ERROR RESET PASSWORD FORM: ", result.message);
+
 				toast({
-					title: (
-						<h1 className="font-extrabold text-lg text-red-800">
-							RESET PASSWORD ERROR
-						</h1>
-					),
+					title: "RESET PASSWORD ERROR",
 					description: (
-						<div className="bg-red-100 p-4 rounded-md w-[350px]">
+						<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
 							<p className="text-md font-bold text-red-500">{result.message}</p>
 						</div>
 					),
 					duration: 5000,
-					className: "border-none bg-red-500/80",
+					className:
+						"border-none bg-red-500/80 font-extrabold text-lg text-white",
 				});
 			} else {
 				toast({
-					title: (
-						<h1 className="font-extrabold text-lg text-green-800">
-							RESET PASSWORD SUCCESS
-						</h1>
-					),
+					title: "RESET PASSWORD SUCCESS",
 					description: (
-						<div className="bg-green-100 p-4 rounded-md w-[350px]">
+						<div className="bg-green-100 p-4 rounded-md w-[350px] shadow shadow-green-500">
 							<p className="text-md font-bold text-green-500">
 								{result.message}
 							</p>
 						</div>
 					),
 					duration: 5000,
-					className: "border-none bg-green-500/80",
+					className:
+						"border-none bg-green-500/80 font-extrabold text-lg text-white",
 				});
 			}
 		} catch (error) {
 			console.error(error);
+
 			toast({
-				title: (
-					<h1 className="font-extrabold text-lg text-red-800">
-						RESET PASSWORD ERROR
-					</h1>
-				),
+				title: "RESET PASSWORD ERROR",
 				description: (
-					<div className="bg-red-100 p-4 rounded-md w-[350px]">
+					<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
 						<p className="text-md font-bold text-red-500">
 							{(error as Error).message}
 						</p>
 					</div>
 				),
 				duration: 5000,
-				className: "border-none bg-red-500/80",
+				className:
+					"border-none bg-red-500/80 font-extrabold text-lg text-white",
 			});
 		} finally {
 			setLoading(false);

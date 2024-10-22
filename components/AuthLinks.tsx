@@ -21,24 +21,31 @@ const AuthLinks: FC<AuthLinksProps> = ({ userType, first_name }) => {
 			const result = await logout();
 			if (result.status === "success") {
 				toast({
-					title: "Logout",
+					title: "LOGOUT SUCCESS",
 					description: (
-						<div className="bg-green-100 p-2 w-[350px]">
-							<p className="text-green-500 text-sm">{result.message}</p>
+						<div className="bg-green-100 p-4 rounded-md w-[350px] shadow shadow-green-500">
+							<p className="text-md font-bold text-green-500">
+								{result.message}
+							</p>
 						</div>
 					),
 					duration: 5000,
+					className:
+						"border-none bg-green-500/80 font-extrabold text-lg text-green-800",
 				});
+
 				router.push("/login");
 			} else {
 				toast({
-					title: "Logout",
+					title: "LOGOUT ERROR",
 					description: (
-						<div className="bg-red-100 p-2 w-[350px]">
-							<p className="text-red-500 text-sm">{result.message}</p>
+						<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
+							<p className="text-md font-bold text-red-500">{result.message}</p>
 						</div>
 					),
 					duration: 5000,
+					className:
+						"border-none bg-red-500/80 font-extrabold text-lg text-red-800",
 				});
 			}
 		} catch (error) {

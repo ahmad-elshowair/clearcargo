@@ -83,38 +83,49 @@ export const CreateClearanceForm: FC<CreateClearanceFormProps> = ({
 			// IF THERE IS AN ERROR IN CREATING THE CLEARANCE, SHOW THE MESSAGE IN A TOAST MESSAGE
 			if (result.status === "error") {
 				console.error("ERROR IN CLEARANCE CREATION", result.message);
+
 				toast({
-					title: "Creation of Clearance",
+					title: "CREATION OF CLEARANCE ERROR",
 					description: (
-						<pre className="p-2 bg-red-100 text-red-800 rounded-md w-[350px]">
-							<p>{result.message}</p>
-						</pre>
+						<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
+							<p className="text-md font-bold text-red-500">{result.message}</p>
+						</div>
 					),
 					duration: 5000,
+					className:
+						"border-none bg-red-500/80 font-extrabold text-lg text-red-800",
 				});
 			} else {
-				// IF THERE IS NO ERROR, SHOW A SUCCESS MESSAGE, REDIRECT TO THE CLEARANCES PAGE
+				// IF THERE IS NO ERROR, SHOW A SUCCESS MESSAGE, REDIRECT TO THE CLEARANCES PAGE.
 				toast({
-					title: "Creation of Clearance",
+					title: "CREATE CLEARANCE SUCCESS",
 					description: (
-						<pre className="p-2 bg-green-100 text-green-800 rounded-md w-[350px]">
-							<p>{result.message}</p>
-						</pre>
+						<div className="bg-green-100 p-4 rounded-md w-[350px] shadow shadow-green-500">
+							<p className="text-md font-bold text-green-500">
+								{result.message}
+							</p>
+						</div>
 					),
 					duration: 5000,
+					className:
+						"border-none bg-green-500/80 font-extrabold text-lg text-green-800",
 				});
 				router.push(link!);
 			}
 		} catch (error) {
 			console.error("ERROR IN FORM SUBMISSION", error);
 			toast({
-				title: "Error in form submission",
+				title: "CREATION OF CLEARANCE ERROR",
 				description: (
-					<pre className="p-2 bg-red-100 text-red-800 rounded-md w-[350px]">
-						<p>{(error as Error).message}</p>
-					</pre>
+					<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
+						<p className="text-md font-bold text-red-500">
+							{(error as Error).message}
+						</p>
+					</div>
 				),
 				duration: 5000,
+				className:
+					"border-none bg-red-500/80 font-extrabold text-lg text-red-800",
 			});
 		} finally {
 			setIsSubmitting(false);

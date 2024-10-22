@@ -11,33 +11,28 @@ const LogoutButton = () => {
 
 		if (result.status === "success") {
 			toast({
-				title: (
-					<h1 className="font-extrabold text-lg text-green-800">
-						Logout Success
-					</h1>
-				),
+				title: "LOGOUT SUCCESS",
 				description: (
-					<div className="bg-green-100 p-4 rounded-md w-[350px]">
+					<div className="bg-green-100 p-4 rounded-md w-[350px] shadow shadow-green-500/50">
 						<p className="text-md font-bold text-green-500">{result.message}</p>
 					</div>
 				),
 				duration: 5000,
-				className: "border-none bg-green-500/80",
+				className:
+					"border-none bg-green-500/80 text-lg text-white font-extrabold",
 			});
 		} else {
 			console.error("Failed to log out:", result.message);
-
 			toast({
-				title: (
-					<h1 className="font-extrabold text-lg text-red-800">Logout Error</h1>
-				),
+				title: "LOGOUT ERROR",
 				description: (
-					<div className="bg-red-100 p-4 rounded-md w-[350px]">
+					<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500/50">
 						<p className="text-md font-bold text-red-500">{result.message}</p>
 					</div>
 				),
 				duration: 5000,
-				className: "border-none bg-red-500/80",
+				className:
+					"border-none bg-red-500/80 font-extrabold text-lg text-white",
 			});
 		}
 	};
