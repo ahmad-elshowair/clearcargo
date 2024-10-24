@@ -156,7 +156,15 @@ export const updateCustomerInfo = async (formData: FormData) => {
 		}
 
 		revalidatePath("/dashboard/profile");
-		return { status: "success", message: "CUSTOMER INFO UPDATED SUCCESSFULLY" };
+		return {
+			status: "success",
+			message: updatedFields.email
+				? [
+						"User Info Updated!",
+						"Please check your email for confirmation links.",
+				  ]
+				: "User Info Updated!",
+		};
 	} catch (error) {
 		console.error("ERROR UPDATING USER INFO:", (error as Error).message);
 		return { status: "error", message: (error as Error).message };

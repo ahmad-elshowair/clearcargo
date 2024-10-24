@@ -100,7 +100,10 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 					description: (
 						<div className="bg-green-100 p-4 rounded-md w-[350px] shadow shadow-green-500">
 							<p className="text-md font-bold text-green-500">
-								{result.message}
+								{result.message?.[0]}
+							</p>
+							<p className="text-md font-bold text-green-500">
+								{result.message?.[1]}
 							</p>
 						</div>
 					),
@@ -286,6 +289,16 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 											</FormItem>
 										)}
 									/>
+
+									{/* ANOTHER OPTION TO CHANGE EMAIL: <ask the administration to change your email address> */}
+									{/* <p>
+										<a
+											href="mailto:your-email@example.com"
+											className="inline-flex items-center gap-2 text-sm font-medium text-green-500 hover:text-green-700 hover:underline transition-colors duration-200 ease-in-out">
+											email us
+										</a>
+										<span className="text-xs text-gray-500"> to change your email address.</span>
+									</p> */}
 								</div>
 							</CardContent>
 							<CardFooter className="justify-end">
