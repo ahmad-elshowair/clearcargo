@@ -8,6 +8,7 @@ import {
 	UserResponse,
 } from "@/types/user";
 import { revalidatePath } from "next/cache";
+import { logout } from "./auth";
 
 const USERS_PER_PAGE = 5;
 
@@ -155,7 +156,13 @@ export const updateCustomerInfo = async (formData: FormData) => {
 			return { status: "error", message: updateError.message };
 		}
 
-		revalidatePath("/dashboard/profile");
+		// IF THE EMAIL WAS UPDATED,THEN LOGOUT.
+		if (updatedFields.email) {
+			await logout();
+		} else {
+			revalidatePath("/dashboard/profile");
+		}
+
 		return {
 			status: "success",
 			message: updatedFields.email
