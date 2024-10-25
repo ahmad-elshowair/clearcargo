@@ -32,7 +32,6 @@ export type UpdateCustomerData = z.infer<typeof UpdateCustomerSchema>;
 
 export const ChangePasswordSchema = z
 	.object({
-		old_password: z.string().min(1, { message: "Old password is required." }),
 		new_password: z
 			.string()
 			.min(8, { message: "Be at least 8 characters long" })

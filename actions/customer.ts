@@ -177,3 +177,37 @@ export const updateCustomerInfo = async (formData: FormData) => {
 		return { status: "error", message: (error as Error).message };
 	}
 };
+
+// CHANGE THE THE PASSWORD OF THE USER
+export const changePassword = async (newPassword: string) => {
+	try {
+		const supabase = await createSupabaseServerClient();
+
+		const {
+			data: { user },
+			error: userError,
+		} = await supabase.auth.getUser();
+		if (userError || !user) {
+			console.error("ERROR GETTING USER:", userError?.message);
+			return {
+				status: "error",
+				message: userError?.message || "FAILED TO AUTHENTICATE USER",
+			};
+		}
+
+		const { error: changeError } = await supabase.auth.updateUser({
+			password: newPassword,
+		});
+
+		if (changeError) {
+			console.error("ERROR UPDATING PASSWORD:", changeError.message);
+			return { status: "error", message: changeError.message };
+		} else {
+			await logout();
+			return { status: "success", message: "You have changed your password!" };
+		}
+	} catch (error) {
+		console.error("ERROR UPDATING PASSWORD:", (error as Error).message);
+		return { status: "error", message: (error as Error).message };
+	}
+};

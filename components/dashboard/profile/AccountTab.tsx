@@ -1,6 +1,6 @@
 "use client";
 
-import { updateCustomerInfo } from "@/actions/customer";
+import { changePassword, updateCustomerInfo } from "@/actions/customer";
 import { useToast } from "@/components/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,7 +35,7 @@ import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaBirthdayCake } from "react-icons/fa";
-import { FaSquarePhone } from "react-icons/fa6";
+import { FaEye, FaEyeSlash, FaSquarePhone } from "react-icons/fa6";
 import { MdAlternateEmail } from "react-icons/md";
 import { PiTextboxBold } from "react-icons/pi";
 import { RiLockPasswordFill } from "react-icons/ri";
@@ -48,6 +48,11 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 	const router = useRouter();
 	const { toast } = useToast();
 	const [isPending, setIsPending] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
+
+	const handleShowPassword = () => {
+		setShowPassword(!showPassword);
+	};
 
 	const formInfo = useForm<UpdateCustomerData>({
 		resolver: zodResolver(UpdateCustomerSchema),
@@ -63,7 +68,6 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 	const formSettings = useForm<ChangePasswordData>({
 		resolver: zodResolver(ChangePasswordSchema),
 		defaultValues: {
-			old_password: "",
 			new_password: "",
 			confirm_new_password: "",
 		},
@@ -136,7 +140,61 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 	};
 
 	const onSubmitSettings = async (data: ChangePasswordData) => {
-		console.log("onSubmitSettings called with data:", data); // Debug log
+		setIsPending(true);
+		try {
+			// CHECK IF THE NEW PASSWORD AND CONFIRM NEW PASSWORD ARE THE SAME.
+			if (data.new_password !== data.confirm_new_password) {
+				toast({
+					title: "CHANGE PASSWORD ERROR",
+					description: (
+						<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
+							<p className="text-md font-bold text-red-500">
+								New password and confirm new password are not the same.
+							</p>
+						</div>
+					),
+					duration: 5000,
+					className:
+						"border-none bg-red-500/80 font-extrabold text-lg text-red-800",
+				});
+				return;
+			}
+
+			// CHANGE THE USER PASSWORD IN SUPABASE.
+			const result = await changePassword(data.new_password);
+			if (result.status === "error") {
+				toast({
+					title: "CHANGE PASSWORD ERROR",
+					description: (
+						<div className="bg-red-100 p-4 rounded-md w-[360px] shadow shadow-red-500">
+							<p className="text-md font-bold text-red-500">{result.message}</p>
+						</div>
+					),
+					duration: 5000,
+					className:
+						"border-none bg-red-500/80 font-extrabold text-lg text-red-800",
+				});
+			} else {
+				toast({
+					title: "CHANGE PASSWORD SUCCESS",
+					description: (
+						<div className="bg-green-100 p-4 rounded-md w-[350px] shadow shadow-green-500">
+							<p className="text-md font-bold text-green-500">
+								{result.message}
+							</p>
+						</div>
+					),
+					duration: 5000,
+					className:
+						"border-none bg-green-500/80 font-extrabold text-lg text-green-800",
+				});
+
+				router.refresh();
+			}
+		} catch (error) {
+		} finally {
+			setIsPending(false);
+		}
 	};
 	return (
 		<Tabs defaultValue="personal-info" className="w-ful">
@@ -327,35 +385,6 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 								<div className="mb-3">
 									<FormField
 										control={formSettings.control}
-										name="old_password"
-										render={({ field }) => (
-											<FormItem className="w-full">
-												<FormLabel className="text-green-800 md:font-bold">
-													Old Password
-												</FormLabel>
-												<FormControl>
-													<div className="flex items-center border border-gray-200 rounded-lg">
-														<span className="p-2 bg-gray-200 rounded-l-lg">
-															<RiLockPasswordFill className=" h-[20px] w-[18px] text-green-700" />
-														</span>
-														<Input
-															{...field}
-															type="password"
-															placeholder="********"
-															className="bg-white border-none rounded-l-none"
-															onChange={(e) => field.onChange(e.target.value)}
-														/>
-													</div>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
-
-								<div className="mb-3">
-									<FormField
-										control={formSettings.control}
 										name="new_password"
 										render={({ field }) => (
 											<FormItem className="w-full">
@@ -367,13 +396,25 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 														<span className="p-2 bg-gray-200 rounded-l-lg">
 															<RiLockPasswordFill className=" h-[20px] w-[18px] text-green-700" />
 														</span>
-														<Input
-															{...field}
-															type="password"
-															placeholder="********"
-															className="bg-white border-none rounded-l-none"
-															onChange={(e) => field.onChange(e.target.value)}
-														/>
+														<div className="relative w-full">
+															<Input
+																{...field}
+																type={showPassword ? "text" : "password"}
+																placeholder="********"
+																className="bg-white border-none rounded-l-none"
+																onChange={(e) => field.onChange(e.target.value)}
+															/>
+															<button
+																type="button"
+																className="absolute inset-y-0 right-0 pr-3 flex items-center"
+																onClick={handleShowPassword}>
+																{showPassword ? (
+																	<FaEyeSlash className="h-5 w-5 text-gray-500" />
+																) : (
+																	<FaEye className="h-5 w-5 text-gray-500" />
+																)}
+															</button>
+														</div>
 													</div>
 												</FormControl>
 												<FormMessage />
@@ -396,13 +437,25 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 														<span className="p-2 bg-gray-200 rounded-l-lg">
 															<RiLockPasswordFill className=" h-[20px] w-[18px] text-green-700" />
 														</span>
-														<Input
-															{...field}
-															type="password"
-															placeholder="********"
-															className="bg-white border-none rounded-l-none"
-															onChange={(e) => field.onChange(e.target.value)}
-														/>
+														<div className="relative w-full">
+															<Input
+																{...field}
+																type={showPassword ? "text" : "password"}
+																placeholder="********"
+																className="bg-white border-none rounded-l-none"
+																onChange={(e) => field.onChange(e.target.value)}
+															/>
+															<button
+																type="button"
+																className="absolute inset-y-0 right-0 pr-3 flex items-center"
+																onClick={handleShowPassword}>
+																{showPassword ? (
+																	<FaEyeSlash className="h-5 w-5 text-gray-500" />
+																) : (
+																	<FaEye className="h-5 w-5 text-gray-500" />
+																)}
+															</button>
+														</div>
 													</div>
 												</FormControl>
 												<FormMessage />
@@ -412,8 +465,12 @@ const AccountTab: FC<AccountTabProps> = ({ user }) => {
 								</div>
 							</CardContent>
 							<CardFooter className="justify-end">
-								<Button className="bg-green-400 hover:bg-green-500 hover:font-bold">
-									Change password
+								<Button
+									className="bg-green-400 hover:bg-green-500 hover:font-bold"
+									type="submit"
+									disabled={isPending}
+									aria-disabled={isPending}>
+									{isPending ? "Saving..." : "Change password"}
 								</Button>
 							</CardFooter>
 						</Card>
